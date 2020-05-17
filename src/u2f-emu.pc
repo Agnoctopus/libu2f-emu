@@ -1,0 +1,12 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Libu2f-emu
+Description: Universal 2nd Factor (U2F) Emulation C Library
+Version: 1.0.0
+
+Requires:
+Libs: -L${libdir} -lu2f-emu
+Cflags: -I${includedir}/u2f-emu

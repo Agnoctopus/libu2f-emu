@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Libu2f-emu
+Description: Universal 2nd Factor (U2F) Emulation C Library
+Version: @version@
+
+Requires:
+Libs: -L${libdir} -lu2f-emu
+Cflags: -I${includedir}/u2f-emu
