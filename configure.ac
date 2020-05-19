@@ -26,6 +26,7 @@ AM_SILENT_RULES([yes])
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_AR
+AC_PROG_INSTALL
 
 # Compiler flags
 AX_CHECK_COMPILE_FLAG([-pedantic],
@@ -43,16 +44,23 @@ LT_INIT([
 # Checks for libraries.
 
 # Checks for header files.
+AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
 AC_C_INLINE
+AC_CHECK_HEADER_STDBOOL
+AC_TYPE_SIZE_T
+AC_TYPE_UINT8_T
 
 # Checks for library functions.
+AC_FUNC_MALLOC
 
+# Configs
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
   src/u2f-emu.pc
 ])
+
+# Output
 AC_OUTPUT
