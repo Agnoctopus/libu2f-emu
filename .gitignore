@@ -1,0 +1,30 @@
+*.o
+*.lo
+*.so
+*~
+doc
+build-aux
+
+# Cmake
+build/
+
+# Autotools
+m4/
+autom4te.cache/
+.deps
+.libs
+Makefile
+Makefile.in
+config.h
+config.h.in
+config.log
+config.status
+configure
+aclocal.m4
+libtool
+stamp-h1
+libu2f-emu.la
+u2f-emu.pc
+autoscan.log
+configure.scan
+Doxyfile

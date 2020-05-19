@@ -10,3 +10,31 @@ include(GNUInstallDirs)
 
 # Add sources subdirectory
 add_subdirectory(src)
+
+# Doxygen
+find_package(Doxygen)
+
+# Dot
+find_program(DOT dot)
+if(DOT)
+    set (HAVE_DOT YES)
+else()
+    set (HAVE_DOT NO)
+    message("Dot not found: for pretty documentation")
+endif()
+
+# Doc
+if(DOXYGEN_FOUND)
+    set (VERSION ${PROJECT_VERSION})
+    set (top_srcdir ${CMAKE_SOURCE_DIR})
+
+    configure_file(
+        ${CMAKE_SOURCE_DIR}/Doxyfile.in
+        ${CMAKE_SOURCE_DIR}/Doxyfile)
+
+    add_custom_target(doc
+        COMMAND doxygen
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+else()
+    message("Doxygen not found: continuing without Doxygen support")
+endif()

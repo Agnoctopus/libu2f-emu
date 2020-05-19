@@ -28,6 +28,18 @@ AC_PROG_CC
 AM_PROG_AR
 AC_PROG_INSTALL
 
+# Doxygen
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN"; then
+        AC_MSG_WARN([Doxygen not found: continuing without Doxygen support])
+fi
+
+# Dot
+AC_CHECK_PROGS([DOT], [dot])
+if test -z "$DOT"; then
+        AC_MSG_WARN([Dot not found: for pretty documentation])
+fi
+
 # Compiler flags
 AX_CHECK_COMPILE_FLAG([-pedantic],
                       [AM_CFLAGS="$AM_CFLAGS -pedantic"])
@@ -54,6 +66,14 @@ AC_TYPE_UINT8_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
+
+# Docs
+AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
+AM_CONDITIONAL([HAVE_DOT], [test -n "$DOT"])
+AM_COND_IF([HAVE_DOT],
+        AC_SUBST([HAVE_DOT], [YES]),
+        AC_SUBST([HAVE_DOT], [NO]))
+AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([Doxyfile])])
 
 # Configs
 AC_CONFIG_FILES([
