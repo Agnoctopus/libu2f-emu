@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 # Project general informations
-project(libu2f-emu VERSION 1.0.0 LANGUAGES C
+project(libu2f-emu VERSION 1.0.0 LANGUAGES C CXX
     DESCRIPTION "Universal 2nd Factor (U2F) Emulation C Library")
 
 # Gnu install dirs
@@ -38,3 +38,8 @@ if(DOXYGEN_FOUND)
 else()
     message("Doxygen not found: continuing without Doxygen support")
 endif()
+
+# Tests
+enable_testing()
+add_subdirectory(tests)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose)

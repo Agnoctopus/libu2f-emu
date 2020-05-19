@@ -25,6 +25,7 @@ AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 AM_PROG_AR
 AC_PROG_INSTALL
 
@@ -54,6 +55,16 @@ LT_INIT([
 ])
 
 # Checks for libraries.
+ACX_PTHREAD([HAVE_PTHREAD=1], [HAVE_PTHREAD=0])
+AM_CONDITIONAL([HAVE_PTHREAD], [test -n "$HAVE_PTHREAD"])
+
+PKG_CHECK_MODULES([GTEST], [gtest, gtest_main], [HAVE_GTEST=1], [HAVE_GTEST=0])
+AM_CONDITIONAL([HAVE_GTEST], [test -n "$HAVE_GTEST"])
+AM_COND_IF([HAVE_GTEST],
+        AC_SUBST([GTEST_CFLAGS])
+        AC_SUBST([GTEST_LIBS])
+        AC_SUBST([GTEST_CPPFLAGS])
+)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h])
@@ -80,6 +91,7 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   src/u2f-emu.pc
+  tests/Makefile
 ])
 
 # Output

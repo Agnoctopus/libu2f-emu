@@ -1,5 +1,5 @@
 # Versions
-set (SO_VERSION 1.0.0)
+set (SO_VERSION ${PROJECT_VERSION})
 
 # Sources
 set (SRC

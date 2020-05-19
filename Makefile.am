@@ -1,5 +1,5 @@
 # Subdirs
-SUBDIRS = src
+SUBDIRS = src tests
 
 # Flags
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
