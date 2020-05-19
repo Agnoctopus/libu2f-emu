@@ -1,6 +1,8 @@
 *.o
 *.lo
 *.so
+*.log
+*.trs
 *~
 doc
 build-aux
@@ -28,3 +30,4 @@ u2f-emu.pc
 autoscan.log
 configure.scan
 Doxyfile
+sanity-check
