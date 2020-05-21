@@ -11,6 +11,9 @@ include(GNUInstallDirs)
 # Add sources subdirectory
 add_subdirectory(src)
 
+# Add examples subdirectory
+add_subdirectory(examples)
+
 # Doxygen
 find_package(Doxygen)
 
