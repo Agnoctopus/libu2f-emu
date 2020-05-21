@@ -13,8 +13,12 @@ if HAVE_DOXYGEN
 doc:
 	$(DOXYGEN) Doxyfile
 
-clean-local:
-	rm -rf $(top_srcdir)/doc
-
-.PHONY: doc
 endif
+
+examples: all
+	$(MAKE) $(AM_MAKEFLAGS) -C examples
+
+clean-local:
+	$(MAKE) $(AM_MAKEFLAGS) -C examples clean
+
+.PHONY: examples doc

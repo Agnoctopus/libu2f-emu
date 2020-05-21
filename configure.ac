@@ -25,6 +25,7 @@ AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_C99
 AC_PROG_CXX
 AM_PROG_AR
 AC_PROG_INSTALL
@@ -42,9 +43,11 @@ if test -z "$DOT"; then
 fi
 
 # Compiler flags
-AX_CHECK_COMPILE_FLAG([-pedantic],
-                      [AM_CFLAGS="$AM_CFLAGS -pedantic"])
 AX_COMPILER_FLAGS
+AX_CHECK_COMPILE_FLAG([-std=c99],
+                      [CFLAGS+=" -std=c99"])
+AX_CHECK_COMPILE_FLAG([-pedantic],
+                      [CFLAGS+=" -pedantic"])
 
 # Libtool configs
 LT_PREREQ([2.4.6])
@@ -88,10 +91,14 @@ AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([Doxyfile])])
 
 # Configs
 AC_CONFIG_FILES([
-  Makefile
-  src/Makefile
-  src/u2f-emu.pc
-  tests/Makefile
+        Makefile
+        src/Makefile
+        src/u2f-emu.pc
+        tests/Makefile
+        examples/Makefile
+        examples/usb/Makefile
+        examples/nfc/Makefile
+        examples/bluetooth/Makefile
 ])
 
 # Output
