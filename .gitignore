@@ -1,3 +1,4 @@
+# Global
 *.o
 *.lo
 *.so
@@ -26,8 +27,13 @@ aclocal.m4
 libtool
 stamp-h1
 libu2f-emu.la
-u2f-emu.pc
 autoscan.log
 configure.scan
+
+# Project
+u2f-emu.pc
+u2f-emu-usb
+u2f-emu-nfc
+u2f-emu-bluetooth
 Doxyfile
 sanity-check
