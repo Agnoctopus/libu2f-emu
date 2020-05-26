@@ -1,4 +1,6 @@
-AM_CFLAGS = $(WARN_CFLAGS) -I${top_srcdir}/src
+MY_WARN_CFLAGS = -fno-strict-aliasing -Wnested-externs -Wmissing-prototypes -Wstrict-prototypes -Wimplicit-function-declaration -Wold-style-definition -Wjump-misses-init -Wall -Wextra -Wundef -Wwrite-strings -Wpointer-arith -Wmissing-declarations -Wredundant-decls -Wno-unused-parameter -Wno-missing-field-initializers -Wformat=2 -Wcast-align -Wformat-nonliteral -Wformat-security -Wsign-compare -Wstrict-aliasing -Wshadow -Winline -Wpacked -Wmissing-format-attribute -Wmissing-noreturn -Winit-self -Wmissing-include-dirs -Wunused-but-set-variable -Warray-bounds -Wreturn-type -Wswitch-enum -Wswitch-default -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wrestrict -Wnull-dereference -Wdouble-promotion -Werror -Wno-suggest-attribute=format -Wno-error=unused-parameter -Wno-error=missing-field-initializers
+
+AM_CFLAGS = $(MY_WARN_CFLAGS) -I${top_srcdir}/src
 
 lib_LTLIBRARIES = libu2f-emu.la
 u2f_emu_includedir=$(includedir)/u2f-emu

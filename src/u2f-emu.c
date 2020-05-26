@@ -23,6 +23,24 @@ static const input_handler_t input_handlers[] =
 };
 
 /**
+** \brief Transport state init handler for U2F virtual emulated
+**        device transport.
+*/
+typedef int (*transport_init_t)(void **state);
+
+/**
+** \brief Transport state init handlers for U2F virtual emulated
+**        device transport.
+*/
+static const transport_init_t transport_inits[] =
+{
+    NULL,
+    u2f_emu_vdev_usb_state_init,
+    NULL,
+    NULL
+};
+
+/**
 ** \brief Number of inputs handlers
 */
 static const size_t input_handlers_nb =
@@ -35,6 +53,7 @@ struct u2f_emu_vdev
 {
     u2f_emu_transport transport; /**< The underlaying transport */
     u2f_emu_apdu apdu; /**< The apdu format */
+    void *transport_state; /**< The transport state */
 };
 
 
@@ -81,6 +100,41 @@ void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
     free(vdev);
 }
 
+/**
+** \brief Init the transport state of an U2F virtual device.
+**
+** \param vdev The virtual device.
+**
+** \return Success: U2F_EMU_OK.
+**         Failure: - transport does not exist, or is not
+**                    implemented: U2F_EMU_SUPPORTED_ERROR:.
+**                  - failed to init the transport
+**                    state: U2F_EMU_TRANSPORT_ERROR.
+*/
+static u2f_emu_rc u2f_emu_vdev_transport_state_init(
+        u2f_emu_vdev *vdev)
+{
+    /* Transport init */
+    transport_init_t transport_init;
+
+    /* Transport existance */
+    if (vdev->transport < 0 || vdev->transport >= input_handlers_nb)
+        return U2F_EMU_SUPPORTED_ERROR;
+
+    /* Get the transport init corresponding to the transport */
+    transport_init = transport_inits[vdev->transport];
+
+    /* Check for implementation */
+    if (transport_init == NULL)
+        return U2F_EMU_OK;
+
+    /* Init the transport state */
+    int ret = transport_init(&vdev->transport_state);
+    if (ret < 0)
+        return U2F_EMU_TRANSPORT_ERROR;
+    return U2F_EMU_OK;
+}
+
 u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
         u2f_emu_transport transport)
 {
@@ -99,6 +153,16 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     /* Initialize */
     vdev->transport = transport;
     vdev->apdu = U2F_EMU_EXTENDED;
+
+    /* Transport state */
+    u2f_emu_rc rc =
+        u2f_emu_vdev_transport_state_init(vdev);
+    if (rc != U2F_EMU_OK)
+    {
+        /* Release */
+        free(vdev);
+        return rc;
+    }
 
     /* Reference */
     *vdev_ref = vdev;
