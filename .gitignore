@@ -29,6 +29,7 @@ stamp-h1
 libu2f-emu.la
 autoscan.log
 configure.scan
+.dirstamp
 
 # Project
 u2f-emu.pc
