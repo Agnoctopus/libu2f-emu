@@ -9,7 +9,7 @@
 #include "u2f-dev.h"
 
 /**
-** \brief U2F USB emulated virtuel device
+** \brief U2F USB emulated virtuel device.
 */
 struct u2f_usb_emu_vdev
 {
@@ -18,7 +18,7 @@ struct u2f_usb_emu_vdev
 };
 
 /**
-** \brief The FIDO2/U2F UHID Descriptor
+** \brief The FIDO2/U2F UHID Descriptor.
 */
 static const uint8_t fido_u2f_desc[] =
 {

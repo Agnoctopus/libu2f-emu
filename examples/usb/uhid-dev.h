@@ -22,7 +22,7 @@ int uhid_dev_recv_event(int fd, struct uhid_event *ev);
 ** \param fd The fd of the UHID USB device.
 ** \param data The data to send.
 ** \param size The data size.
-** \return Success: 0
+** \return Success: 0.
 **         Failure: -errno.
 */
 int uhid_dev_send_input(int fd, const void *data, size_t size);

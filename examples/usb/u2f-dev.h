@@ -7,7 +7,7 @@
 
 
 /**
-** \brief U2F USB emulated virtuel device
+** \brief U2F USB emulated virtuel device.
 */
 typedef struct u2f_usb_emu_vdev u2f_usb_emu_vdev;
 
@@ -49,8 +49,8 @@ void u2f_dev_free(u2f_usb_emu_vdev *vdev_usb);
 **
 ** \param fd The fd of the UHID USB U2F device.
 ** \param vdef The U2F virtual emulated device.
-** \return Success: 0
-**         Failure: -1
+** \return Success: 0.
+**         Failure: -1.
 */
 int u2f_dev_usb_run(const u2f_usb_emu_vdev *usb_vdev);
 
