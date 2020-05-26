@@ -1,8 +1,9 @@
 #ifndef UHID_DEV_H
 #define UHID_DEV_H
 
-#include <stddef.h>
 #include <linux/uhid.h>
+#include <stddef.h>
+
 
 /**
 ** \brief Receive an UHID event from the kernel to
@@ -48,7 +49,7 @@ int uhid_dev_new_with_path(const char *uhid_path,
         const struct uhid_create2_req *dev_info);
 
 /**
-** \brief Create an uhid USB device with the defautl UHID char device
+** \brief Create an UHID USB device with the defautl UHID char device
 **        path /dev/uhid.
 **
 ** \param dev_info The device informations.
