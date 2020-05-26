@@ -16,7 +16,7 @@
 const char *u2f_emu_strerror(u2f_emu_rc rc);
 
 /**
-** \brief Instantiate a new U2F virtual emultated device.
+** \brief Instantiate a new U2F virtual emulated device.
 **
 ** \param vdev Virtual device reference.
 ** \return Success: U2F_EMU_OK.
@@ -38,14 +38,14 @@ u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev_ref,
         u2f_emu_apdu apdu);
 
 /**
-** \brief Free an U2F virtual emultated device.
+** \brief Free an U2F virtual emulated device.
 **
 ** \param vdev Virtual device pointer.
 */
 void u2f_emu_vdev_free(u2f_emu_vdev *vdev);
 
 /**
-** \brief Ask an U2F virtual emultaed device to process input data.
+** \brief Ask an U2F virtual emulated device to process input data.
 **
 ** \param vdev Virtual device pointer.
 ** \param data The input data to process.
@@ -55,6 +55,6 @@ void u2f_emu_vdev_free(u2f_emu_vdev *vdev);
 **                    implemented: U2F_EMU_SUPPORTED_ERROR:.
 */
 u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
-        void *data, size_t size);
+        const void *data, size_t size);
 
 #endif

@@ -1,13 +1,14 @@
 #include <stdlib.h>
 
 #include "u2f-emu.h"
+#include "usb/usb.h"
 
 
 /**
 ** \brief Input handler for U2F virtual emulated device input
 **        processing.
 */
-typedef void (*input_handler_t)(void *data, size_t size);
+typedef void (*input_handler_t)(const void *data, size_t size);
 
 /**
 ** \brief Input handlers for U2F virtual emulated device input
@@ -16,7 +17,7 @@ typedef void (*input_handler_t)(void *data, size_t size);
 static const input_handler_t input_handlers[] =
 {
     NULL,
-    NULL,
+    u2f_emu_vdev_usb_process,
     NULL,
     NULL
 };
@@ -38,7 +39,7 @@ struct u2f_emu_vdev
 
 
 u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
-        void *data, size_t size)
+        const void *data, size_t size)
 {
     /* Input handler */
     input_handler_t input_handler;
