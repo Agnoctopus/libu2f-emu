@@ -1,11 +1,14 @@
 #ifndef TRANSACTION_H
 #define TRANSaCTION_H
 
+#include <stdbool.h>
 #include <time.h>
+
+#include "message.h"
 
 
 /**
-** \brief Message timeout
+** \brief Message timeout.
 */
 #define TIMEOUT_SECONDS 5
 
@@ -19,5 +22,23 @@ struct transaction
     struct message *request; /**< The request  */
     struct message *response; /**< The response */
 };
+
+/**
+** \brief Check if a transaction timeout.
+**
+** \param transaction The transaction.
+** \return Timeout: true.
+**         Not tiemout: false.
+*/
+bool transaction_timeout(const struct transaction *transaction);
+
+/**
+** \brief Start a transaction
+**
+** \param message The actual request message
+*/
+void transaction_start(struct transaction *transaction,
+        struct message *request);
+
 
 #endif
