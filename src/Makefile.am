@@ -6,11 +6,17 @@ lib_LTLIBRARIES = libu2f-emu.la
 u2f_emu_includedir=$(includedir)/u2f-emu
 u2f_emu_include_HEADERS = u2f-emu.h u2f-emu-types.h
 
+# General
 libu2f_emu_la_SOURCES = u2f-emu.h u2f-emu-types.h
 libu2f_emu_la_SOURCES += raw-message.h
 libu2f_emu_la_SOURCES += u2f-emu.c error.c raw-message.c
+# USB
 libu2f_emu_la_SOURCES += usb/usb.c usb/usb.h
 libu2f_emu_la_SOURCES += usb/transaction.c usb/transaction.h
+libu2f_emu_la_SOURCES += usb/message.c usb/message.h
+libu2f_emu_la_SOURCES += usb/cmd.c usb/cmd.h
+libu2f_emu_la_SOURCES += usb/packet.c usb/packet.h
+# MISC
 libu2f_emu_la_SOURCES += u2f-emu.pc.in
 
 libu2f_emu_la_LDFLAGS = -version-info $(SO_VERSION)

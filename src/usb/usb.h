@@ -22,7 +22,8 @@ struct usb_state
 ** \param packet The USB HID packet.
 ** \param size The size of the USB HID packet.
 */
-void u2f_emu_vdev_usb_process(const void *packet, size_t size);
+void u2f_emu_vdev_usb_process(void *state, const void *packet,
+        size_t size);
 
 /**
 ** \brief Init the USB state.

@@ -8,7 +8,8 @@
 ** \brief Input handler for U2F virtual emulated device input
 **        processing.
 */
-typedef void (*input_handler_t)(const void *data, size_t size);
+typedef void (*input_handler_t)(void *state,
+        const void *data, size_t size);
 
 /**
 ** \brief Input handlers for U2F virtual emulated device input
@@ -75,7 +76,7 @@ u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
         return U2F_EMU_SUPPORTED_ERROR;
 
     /* Process input */
-    input_handler(data, size);
+    input_handler(vdev->transport_state, data, size);
 
     return U2F_EMU_OK;
 }
