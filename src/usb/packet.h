@@ -25,7 +25,7 @@
 #define PACKET_CONT_MAX_SEQ (BIT(7) - 1)
 
 /* Broadcast channels */
-#define BROADCAST_CHANNEL 0xFFFFFFFF
+#define BROADCAST_CID 0xFFFFFFFF
 
 /**
 ** \brief U2FHID packet use for start messsaging during transaction

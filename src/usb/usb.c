@@ -5,6 +5,7 @@
 #include "packet.h"
 #include "usb.h"
 
+
 /**
 ** \brief The packet init handler.
 **
@@ -23,7 +24,7 @@ static struct message *packet_init_handle(struct usb_state *state,
     if (request->size == request->bcnt)
     {
         /* Reponse */
-        struct message *response = NULL; //cmd_process(request);
+        struct message *response = cmd_process(request);
 
         /* Free */
         message_free(request);
@@ -57,7 +58,7 @@ static struct message *packet_cont_handle(struct usb_state *state,
     if (request->size == request->bcnt)
     {
         /* Process */
-        struct message *response = NULL; //cmd_process(request);
+        struct message *response = cmd_process(request);
 
         /* End transaction */
         state->in_transaction = false;

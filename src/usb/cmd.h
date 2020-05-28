@@ -31,6 +31,28 @@
 #define ERROR_CMD_LOCK_RQ   7
 #define ERROR_SYNC_FAILED   8
 
+/* Init CMD informations */
+#define U2FHID_INIT_BCNT 8
+#define PROTOCOL_VERSION 2
+#define MAJ_DEV_VERSION 0
+#define MIN_DEV_VERSION 1
+#define BUILD_DEV_VERSION 0
+#define CAP_FLAGS 0
+#define CAPABILITY_WINK 0
+
+/**
+** \brief The command init reponse payload
+*/
+struct cmd_init_resp_payload
+{
+    uint8_t nonce[8]; /**< Nonce */
+    uint32_t cid; /**< Channel id */
+    uint8_t protocol_ver; /**< U2FHID protocol version */
+    uint8_t maj_dev_ver; /**< Major device version */
+    uint8_t min_dev_ver; /**< Minor device version */
+    uint8_t build_dev_ver; /**< Build device version */
+    uint8_t cap_flags; /**< Capabilities flags */
+} __packed;
 
 /**
 ** \brief Get the command error description.
@@ -48,5 +70,14 @@ const char *cmd_strerror(int error_nb);
 ** \return The respective error reponse generated
 */
 struct message *cmd_generate_error(uint32_t cid, uint8_t error);
+
+/**
+** \brief Process a command request.
+**
+** \param request The command request message.
+** \return The reponse generated bu the request process.
+*/
+struct message *cmd_process(const struct message *request);
+
 
 #endif
