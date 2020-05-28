@@ -1,11 +1,22 @@
 # Versions
 set (SO_VERSION ${PROJECT_VERSION})
 
+# Default Release
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 # Sources
 set (SRC
     u2f-emu.c
     error.c
-    raw-message.c)
+    raw-message.c
+    usb/cmd.c
+    usb/message.c
+    usb/packet.c
+    usb/transaction.c
+    usb/usb.c
+    )
 
 # Headers
 set (HEADERS
@@ -19,8 +30,17 @@ target_include_directories(u2f-emu PRIVATE .)
 set_target_properties(u2f-emu PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(u2f-emu PROPERTIES SOVERSION ${SO_VERSION})
 set_target_properties(u2f-emu PROPERTIES PUBLIC_HEADER "${HEADERS}")
+target_compile_options(u2f-emu PRIVATE -Wall -Wextra -pedantic -std=c99)
 install(TARGETS u2f-emu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/u2f-emu)
+
+# Flags
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(u2f-emu PRIVATE -g0 -O2)
+endif()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(u2f-emu PRIVATE -g3 -O0)
+endif()
 
 # Pkgconfig
 set (version ${SO_VERSION})
