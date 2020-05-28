@@ -33,9 +33,10 @@ struct transaction
 bool transaction_timeout(const struct transaction *transaction);
 
 /**
-** \brief Start a transaction
+** \brief Start a transaction.
 **
-** \param message The actual request message
+** \param transaction The transaction to start.
+** \param request The corresponding request message.
 */
 void transaction_start(struct transaction *transaction,
         struct message *request);

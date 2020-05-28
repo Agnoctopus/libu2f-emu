@@ -18,12 +18,13 @@ const char *u2f_emu_strerror(u2f_emu_rc rc);
 /**
 ** \brief Instantiate a new U2F virtual emulated device.
 **
-** \param vdev Virtual device reference.
+** \param vdev_ref Virtual device reference.
+** \param transport The transport of the virtual device.
 ** \return Success: U2F_EMU_OK.
 **         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.
 **                  - not supported: U2F_EMU_SUPPORTED_ERROR.
 */
-u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev,
+u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
         u2f_emu_transport transport);
 
 /**
@@ -34,7 +35,7 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev,
 ** \return Success: U2F_EMU_OK.
 **         Failure: not allowed: U2F_EMU_PERMISSION_ERROR
 */
-u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev_ref,
+u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
         u2f_emu_apdu apdu);
 
 /**

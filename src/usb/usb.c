@@ -6,10 +6,12 @@
 #include "usb.h"
 
 /**
-** \brief The packet init handler
+** \brief The packet init handler.
 **
-** \param packet The init packet
-** \return The response or null if no response
+** \param state The usb state.
+** \param packet The init packet.
+** \return Success: The response.
+**         Failure / No response: NULL.
 */
 static struct message *packet_init_handle(struct usb_state *state,
         const struct packet_init *packet)
@@ -35,10 +37,12 @@ static struct message *packet_init_handle(struct usb_state *state,
 }
 
 /**
-** \brief The packet cont handler
+** \brief The packet cont handler.
 **
-** \param packet The cont packet
-** \return The response or null if no response
+** \param state The usb state.
+** \param packet The cont packet.
+** \return Sucess: The response.
+**         Failure / No response: NULL.
 */
 static struct message *packet_cont_handle(struct usb_state *state,
         const struct packet_cont *packet)
@@ -72,9 +76,6 @@ void u2f_emu_vdev_usb_process(void *state, const void *packet,
 {
     /* USB state */
     struct usb_state *usb_state = state;
-    (void)usb_state;
-    (void)packet;
-    (void)size;
 
     /* Get the channel id  */
     uint32_t cid = packet_get_cid(packet);

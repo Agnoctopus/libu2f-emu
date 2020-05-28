@@ -19,6 +19,7 @@ struct usb_state
 /**
 ** \brief Process incoming data from an USB HID packet.
 **
+** \param state The transport state
 ** \param packet The USB HID packet.
 ** \param size The size of the USB HID packet.
 */
