@@ -37,7 +37,7 @@ struct packet_init
     uint8_t bcnth; /**< High part of payload length */
     uint8_t bcntl; /**< Low part of the payload length */
     uint8_t data[PACKET_INIT_DATA_SIZE]; /**< Payload data */
-};
+} __packed;
 
 /**
 ** \brief U2FHID packet use for start messsaging during transaction
@@ -47,7 +47,7 @@ struct packet_cont
     uint32_t cid; /**< Channel identifier */
     uint8_t seq; /**< Packet sequence 0x00..0x7f (bit 7 cleared)*/
     uint8_t data[PACKET_CONT_DATA_SIZE]; /**< Payload data */
-};
+} __packed;
 
 /**
 ** \brief Get the channel id of a packet
