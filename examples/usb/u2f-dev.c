@@ -71,6 +71,7 @@ static void u2f_dev_uhid_info_init(
             sizeof(fido_u2f_desc));
 }
 
+#include <stdio.h>
 /**
 ** \brief Handler for incoming UHDI event for an U2F UHID
 **        USB device.
@@ -78,11 +79,11 @@ static void u2f_dev_uhid_info_init(
 ** \param dev_info The device informations de init.
 */
 static void u2f_dev_uhid_event_handler(
-        const u2f_usb_emu_vdev *vdev_usb)
+        const u2f_usb_emu_vdev *usb_vdev)
 {
     /* Get the event */
     struct uhid_event event;
-    uhid_dev_recv_event(vdev_usb->fd, &event);
+    uhid_dev_recv_event(usb_vdev->fd, &event);
 
     /* Handle only UHID_OUTPUT */
     if (event.type != UHID_OUTPUT)
@@ -93,7 +94,21 @@ static void u2f_dev_uhid_event_handler(
     size_t packet_size = event.u.output.size - 1;
 
     /* Handle packet */
-    u2f_emu_vdev_process(vdev_usb->vdev, packet, packet_size);
+    u2f_emu_vdev_process(usb_vdev->vdev, packet, packet_size);
+
+    /* Handle responses */
+    uint8_t *data = NULL;
+    size_t data_len = 0;
+
+    /* Loop while response parts */
+    while (u2f_emu_vdev_has_response(usb_vdev->vdev))
+    {
+        /* Get response part */
+        data_len = u2f_emu_vdev_get_response(usb_vdev->vdev, &data);
+
+        /* Send response part */
+        uhid_dev_send_input(usb_vdev->fd, data, data_len);
+    }
 }
 
 int u2f_dev_usb_run(const u2f_usb_emu_vdev *usb_vdev)
