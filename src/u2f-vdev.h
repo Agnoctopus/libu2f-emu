@@ -11,12 +11,12 @@
 struct u2f_emu_vdev
 {
     /* Transport */
-    u2f_emu_transport transport; /**< The underlaying transport */
-    u2f_emu_apdu apdu; /**< The apdu format */
-    void *transport_state; /**< The transport state */
+    u2f_emu_transport transport; /**< Underlaying transport */
+    u2f_emu_apdu apdu; /**< Apdu format */
+    void *transport_state; /**< Transport state */
 
     /* Crypto core */
-    struct crypto_core cyrpto_core;
+    struct crypto_core cyrpto_core; /**< Crypto core */
 };
 
 

@@ -97,7 +97,7 @@ static u2f_emu_rc u2f_emu_vdev_transport_state_init(
 }
 
 u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport)
+        u2f_emu_transport transport, const char *setup_dir)
 {
     /* U2F virtual emulated device being instantiated */
     u2f_emu_vdev *vdev;
@@ -123,6 +123,13 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
         /* Release */
         free(vdev);
         return rc;
+    }
+
+    /* Crypto core */
+    if (!crypto_setup_from_dir(setup_dir, &vdev->cyrpto_core))
+    {
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
     }
 
     /* Reference */

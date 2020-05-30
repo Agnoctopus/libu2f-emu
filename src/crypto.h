@@ -1,10 +1,16 @@
 #ifndef CRYPTO
 #define CRYPTO
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <openssl/ec.h>
 #include <openssl/x509.h>
+
+/* Filenames */
+#define CRYPTO_CERT_FILENAME "certificate.pem"
+#define CRYPTO_PRIVKEY_FILENAME "private-key.pem"
+#define CRYPTO_ENTROPY_FILENAME "entropy"
 
 
 /**
@@ -18,7 +24,23 @@ struct crypto_core
     uint8_t entropy[48]; /**< Random bits used in encryption */
 };
 
-X509 *crypto_x509_from_file(const char *pathname);
-EC_KEY *crypto_ec_privkey_from_path(const char *pathname);
+/**
+** \brief Setup a crypto core from a dir.
+**
+** \param pathname The pathname of the dir
+** \param crypto_core The crypto core to setup.
+** \return Sucess: true.
+**         Failure: false.
+*/
+bool crypto_setup_from_dir(const char *pathname,
+        struct crypto_core *crypto_core);
+
+/**
+** \brief Release the memory allocated by the crypto_core.
+**
+** \param crypto_core The crypto core to release.
+*/
+void crypto_release(struct crypto_core *crypto_core);
+
 
 #endif

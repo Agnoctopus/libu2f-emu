@@ -21,12 +21,13 @@ const char *u2f_emu_strerror(u2f_emu_rc rc);
 **
 ** \param vdev_ref The virtual device reference.
 ** \param transport The transport of the virtual device.
+** \param setup_dir The setup dir pathname for device configuration.
 ** \return Success: U2F_EMU_OK.
 **         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.
 **                  - not supported: U2F_EMU_SUPPORTED_ERROR.
 */
 u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport);
+        u2f_emu_transport transport, const char *setup_dir);
 
 /**
 ** \brief Set the apdu length of an U2F virtual emultated device.
