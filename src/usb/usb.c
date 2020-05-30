@@ -137,3 +137,10 @@ int u2f_emu_vdev_usb_state_init(void **state_ref)
 
     return 0;
 }
+
+transport_t usb_transport =
+{
+    .type = U2F_EMU_USB,
+    .state_init = u2f_emu_vdev_usb_state_init,
+    .input_handler = u2f_emu_vdev_usb_process
+};

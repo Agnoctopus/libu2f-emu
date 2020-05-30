@@ -6,8 +6,13 @@
 
 #include "message.h"
 #include "transaction.h"
+#include "transport.h"
 #include "u2f-emu.h"
 
+/**
+** \brief The USB transport
+*/
+extern transport_t usb_transport;
 
 /**
 ** \brief USB transport state.
