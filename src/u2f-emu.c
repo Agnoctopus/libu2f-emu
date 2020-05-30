@@ -1,51 +1,9 @@
 #include <stdlib.h>
 
+#include "transport.h"
 #include "u2f-emu.h"
 #include "usb/usb.h"
 
-
-/**
-** \brief Input handler for U2F virtual emulated device input
-**        processing.
-*/
-typedef void (*input_handler_t)(void *state,
-        const void *data, size_t size);
-
-/**
-** \brief Input handlers for U2F virtual emulated device input
-**        processing, depending of the associated transport.
-*/
-static const input_handler_t input_handlers[] =
-{
-    NULL,
-    u2f_emu_vdev_usb_process,
-    NULL,
-    NULL
-};
-
-/**
-** \brief Transport state init handler for U2F virtual emulated
-**        device transport.
-*/
-typedef int (*transport_init_t)(void **state);
-
-/**
-** \brief Transport state init handlers for U2F virtual emulated
-**        device transport.
-*/
-static const transport_init_t transport_inits[] =
-{
-    NULL,
-    u2f_emu_vdev_usb_state_init,
-    NULL,
-    NULL
-};
-
-/**
-** \brief Number of inputs handlers
-*/
-static const size_t input_handlers_nb =
-        sizeof(input_handlers) / sizeof(input_handlers[0]);
 
 /**
 ** \brief U2F virtual emulated device
@@ -61,22 +19,15 @@ struct u2f_emu_vdev
 u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
         const void *data, size_t size)
 {
-    /* Input handler */
-    input_handler_t input_handler;
+    /* Get the transport */
+    const transport_t *transport = transport_get(vdev->transport);
 
     /* Transport existance */
-    if (vdev->transport < 0 || vdev->transport >= input_handlers_nb)
-        return U2F_EMU_SUPPORTED_ERROR;
-
-    /* Get the input handler corresponding to the transport */
-    input_handler = input_handlers[vdev->transport];
-
-    /* Check for implementation */
-    if (input_handlers == NULL)
+    if (transport == NULL)
         return U2F_EMU_SUPPORTED_ERROR;
 
     /* Process input */
-    input_handler(vdev->transport_state, data, size);
+    transport->input_handler(vdev->transport_state, data, size);
 
     return U2F_EMU_OK;
 }
@@ -115,22 +66,15 @@ void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
 static u2f_emu_rc u2f_emu_vdev_transport_state_init(
         u2f_emu_vdev *vdev)
 {
-    /* Transport init */
-    transport_init_t transport_init;
+    /* Get the transport */
+    const transport_t *transport = transport_get(vdev->transport);
 
     /* Transport existance */
-    if (vdev->transport < 0 || vdev->transport >= input_handlers_nb)
+    if (transport == NULL)
         return U2F_EMU_SUPPORTED_ERROR;
 
-    /* Get the transport init corresponding to the transport */
-    transport_init = transport_inits[vdev->transport];
-
-    /* Check for implementation */
-    if (transport_init == NULL)
-        return U2F_EMU_OK;
-
     /* Init the transport state */
-    int ret = transport_init(&vdev->transport_state);
+    int ret = transport->state_init(&vdev->transport_state);
     if (ret < 0)
         return U2F_EMU_TRANSPORT_ERROR;
     return U2F_EMU_OK;
