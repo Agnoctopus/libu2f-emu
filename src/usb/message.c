@@ -25,6 +25,7 @@ struct message *message_new(const struct packet_init *init_packet)
     message->cid = init_packet->cid;
     message->cmd = init_packet->cmd;
     message->bcnt = bcnt;
+    message->seq_send = PACKET_CONT_MAX_SEQ + 1;
 
     /* Size */
     uint16_t size = bcnt;

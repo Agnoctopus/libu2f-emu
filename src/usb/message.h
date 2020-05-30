@@ -30,6 +30,7 @@ struct message
     uint8_t cmd; /**< Command */
     uint16_t bcnt; /**< Protocol bitcount */
     struct payload *payload; /**< Payload */
+    uint8_t seq_send; /**< Seq state for sending */
 };
 
 /**
