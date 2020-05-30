@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "cmd.h"
+#include "raw/raw.h"
 
 
 /**
@@ -134,8 +135,19 @@ static struct message *cmd_ping_handler(
 static struct message *cmd_msg_handler(
     const struct message *request)
 {
-    (void) request;
-    return NULL;
+    /* Process Data */
+    struct payload *payload = u2f_emu_vdev_raw_process(
+            request->payload->data,
+            request->payload->size, U2F_EMU_EXTENDED);
+
+    /* Encapsulate in a message */
+    struct message *response = message_new_from_data(request->cid,
+            request->cmd, payload->data, payload->size);
+
+    /* Release */
+    payload_free(payload);
+
+    return response;
 }
 
 /**
