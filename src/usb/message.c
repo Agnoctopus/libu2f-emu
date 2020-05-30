@@ -27,27 +27,29 @@ struct message *message_new(const struct packet_init *init_packet)
     message->bcnt = bcnt;
 
     /* Size */
+    uint16_t size = bcnt;
     if (bcnt > PACKET_INIT_DATA_SIZE)
-        message->size = PACKET_INIT_DATA_SIZE;
-    else
-        message->size = bcnt;
+        size = PACKET_INIT_DATA_SIZE;
 
     /* Capacity */
+    uint16_t capacity = MSG_DEF_CAP;
     if (bcnt > 0)
-        message->capacity = CEIL_NB(bcnt, MSG_DEF_CAP);
-    else
-        message->capacity = MSG_DEF_CAP;
+        capacity = CEIL_NB(bcnt, PAYLOAD_DEF_CAP);
 
-    /* Data buffer allocation */
-    uint8_t *data = malloc(message->capacity);
-    if (data == NULL)
+    /* Payload instantation */
+    struct payload *payload = payload_new_with_capacity(capacity);
+    if (payload == NULL)
     {
         /* Release */
         free(message);
         return NULL;
     }
-    memcpy(data, init_packet->data, message->size);
-    message->data = data;
+
+    /* Add init packet content */
+    payload_add_data(payload, init_packet->data, size);
+
+    /* Link payload */
+    message->payload = payload;
 
     return message;
 }
@@ -87,29 +89,13 @@ bool message_add_data(struct message *message,
         const uint8_t *data, size_t size)
 {
     /* Check size */
-    uint16_t size_new = message->size + size;
+    uint16_t size_new = message->payload->size + size;
     if (size_new > MSG_MAX_SIZE)
         return false;
 
-    /* Check capacity */
-    if (size_new > message->capacity)
-    {
-        /* Expand */
-        uint16_t cap_new = CEIL_NB(size_new, MSG_DEF_CAP);
-        uint8_t *data_new = realloc(message->data, cap_new);
-        if (data_new == NULL)
-            return false;
-
-        /* Update */
-        memcpy(data_new, data, message->size);
-        message->capacity = cap_new;
-    }
-
     /* Add data */
-    memcpy(message->data + message->size, data, size);
-
-    /* Update */
-    message->size = size_new;
+    if (!payload_add_data(message->payload, data, size))
+        return false;
     message->bcnt += size;
 
     return true;
@@ -134,23 +120,20 @@ bool message_add_part(struct message *message,
 
     /* Compute data size of the packet */
     uint16_t size_cont = PACKET_CONT_DATA_SIZE;
-    if (message->size + size_cont > message->bcnt)
-        size_cont = message->bcnt - message->size;
+    if (message->payload->size + size_cont > message->bcnt)
+        size_cont = message->bcnt - message->payload->size;
 
     /* Check cont size */
     if (size_cont == 0)
         return false;
 
     /* Add data */
-    memcpy(message->data + message->size,
-        cont_packet->data, size_cont);
-    message->size += size_cont;
-
-    return true;
+    return payload_add_data(message->payload,
+            cont_packet->data, size_cont);
 }
 
 void message_free(struct message *message)
 {
-    free(message->data);
+    payload_free(message->payload);
     free(message);
 }

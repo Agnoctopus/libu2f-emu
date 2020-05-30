@@ -6,8 +6,6 @@
 #include "time.h"
 #include "usb.h"
 
-#include <stdio.h>
-
 
 /**
 ** \brief The packet init handler.
@@ -25,7 +23,7 @@ static struct message *packet_init_handle(struct usb_state *state,
     request->cid = rand_r(&state->cid_seed);
 
     /* Check integrity */
-    if (request->size == request->bcnt)
+    if (request->payload->size == request->bcnt)
     {
         /* Reponse */
         struct message *response = cmd_process(request);
@@ -59,7 +57,7 @@ static struct message *packet_cont_handle(struct usb_state *state,
     message_add_part(request, packet);
 
     /* Check integrity */
-    if (request->size == request->bcnt)
+    if (request->payload->size == request->bcnt)
     {
         /* Process */
         struct message *response = cmd_process(request);
@@ -148,8 +146,11 @@ bool u2f_emu_vdev_usb_has_response(void *state)
 
 size_t u2f_emu_vdev_usb_get_response(void *state, uint8_t **data)
 {
-    (void)state;
+    /* USB state */
+    struct usb_state *usb_state = state;
+
     (void)data;
+    usb_state->response = NULL;
     return 0;
 }
 

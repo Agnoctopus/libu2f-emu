@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "packet.h"
+#include "payload.h"
 
 
 /* bit macro */
@@ -25,14 +26,10 @@
 struct message
 {
     /* Informations */
-    uint32_t cid; /**< Channel ID of the message */
-    uint8_t cmd; /**< Command of the message */
+    uint32_t cid; /**< Channel ID */
+    uint8_t cmd; /**< Command */
     uint16_t bcnt; /**< Protocol bitcount */
-
-    /* Payload */
-    uint16_t size; /**< Size of the message */
-    uint8_t *data;  /**< The contained data of the message */
-    uint16_t capacity; /**< The capacity of the message */
+    struct payload *payload; /**< Payload */
 };
 
 /**

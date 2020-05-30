@@ -185,7 +185,8 @@ static struct message *cmd_init_handler(
     struct cmd_init_resp_payload payload;
 
     /* Fill payload */
-    memcpy(&payload.nonce, request->data, sizeof(payload.nonce));
+    memcpy(&payload.nonce, request->payload->data,
+            sizeof(payload.nonce));
     payload.cid = 2;
     payload.protocol_ver = PROTOCOL_VERSION;
     payload.maj_dev_ver = MAJ_DEV_VERSION;
