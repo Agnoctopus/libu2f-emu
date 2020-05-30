@@ -2,18 +2,8 @@
 
 #include "transport.h"
 #include "u2f-emu.h"
+#include "u2f-vdev.h"
 #include "usb/usb.h"
-
-
-/**
-** \brief U2F virtual emulated device
-*/
-struct u2f_emu_vdev
-{
-    u2f_emu_transport transport; /**< The underlaying transport */
-    u2f_emu_apdu apdu; /**< The apdu format */
-    void *transport_state; /**< The transport state */
-};
 
 
 u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
@@ -100,7 +90,7 @@ static u2f_emu_rc u2f_emu_vdev_transport_state_init(
         return U2F_EMU_SUPPORTED_ERROR;
 
     /* Init the transport state */
-    int ret = transport->state_init(&vdev->transport_state);
+    int ret = transport->state_init(vdev, &vdev->transport_state);
     if (ret < 0)
         return U2F_EMU_TRANSPORT_ERROR;
     return U2F_EMU_OK;

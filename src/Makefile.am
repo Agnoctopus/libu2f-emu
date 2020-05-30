@@ -9,7 +9,7 @@ u2f_emu_includedir=$(includedir)/u2f-emu
 u2f_emu_include_HEADERS = u2f-emu.h u2f-emu-types.h
 
 # General
-libu2f_emu_la_SOURCES = u2f-emu-types.h
+libu2f_emu_la_SOURCES = u2f-emu-types.h u2f-vdev.h
 libu2f_emu_la_SOURCES += u2f-emu.c u2f-emu.h
 libu2f_emu_la_SOURCES += payload.c payload.h
 libu2f_emu_la_SOURCES += crypto.c crypto.h

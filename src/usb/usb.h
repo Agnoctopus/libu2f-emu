@@ -19,6 +19,9 @@ extern transport_t usb_transport;
 */
 struct usb_state
 {
+    /* Upper device link */
+    u2f_emu_vdev *vdev;
+
     /* Internal */
     uint32_t cid_seed; /**< Seed used to generate random cid */
 
@@ -36,7 +39,8 @@ struct usb_state
 ** \return Sucess: 0.
 **         Failure: -errno.
 */
-int u2f_emu_vdev_usb_state_init(void **state_ref);
+int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
+        void **state_ref);
 
 /**
 ** \brief Process incoming data from an USB HID packet.

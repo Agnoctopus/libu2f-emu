@@ -115,7 +115,8 @@ void u2f_emu_vdev_usb_process(void *state,
         usb_state->response = response;
 }
 
-int u2f_emu_vdev_usb_state_init(void **state_ref)
+int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
+        void **state_ref)
 {
     /* Allocate */
     struct usb_state *state = malloc(sizeof(struct usb_state));
@@ -125,6 +126,7 @@ int u2f_emu_vdev_usb_state_init(void **state_ref)
     /* Attributes */
     state->in_transaction = false;
     state->cid_seed = time(NULL);
+    state->vdev = vdev;
 
     /* Referance */
     *(struct usb_state **)state_ref = state;

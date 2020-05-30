@@ -19,6 +19,8 @@ set (SRC
     usb/transaction.c
     usb/usb.c
     raw/raw.c
+    raw/authenticate.c
+    raw/register.c
     )
 
 # Headers

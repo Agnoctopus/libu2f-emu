@@ -11,7 +11,7 @@
 ** \brief Transport state init handler for U2F virtual emulated
 **        device transport.
 */
-typedef int (*state_init_t)(void **state);
+typedef int (*state_init_t)(u2f_emu_vdev *vdev, void **state);
 
 /**
 ** \brief Input handler for U2F virtual emulated device input
