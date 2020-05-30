@@ -133,6 +133,74 @@ bool message_add_part(struct message *message,
             cont_packet->data, size_cont);
 }
 
+bool message_next_packet(struct message *message, void **packet_ref)
+{
+    /* Payload */
+    struct payload *payload = message->payload;
+
+    /* Init packet */
+    if (message->seq_send == PACKET_CONT_MAX_SEQ + 1)
+    {
+        /* Allocate a new packet init */
+        struct packet_init *packet = packet_init_new(message->cid,
+                message->cmd, message->bcnt);
+        if (packet == NULL)
+            return true;
+
+        /* Compute payload size */
+        size_t packet_payload_size = PACKET_INIT_DATA_SIZE;
+        if (payload->size <= PACKET_INIT_DATA_SIZE)
+            packet_payload_size = payload->size;
+
+        /* Copy data */
+        memcpy(packet->data, payload->data, packet_payload_size);
+
+        /* Packet ref */
+        *packet_ref = packet;
+
+        /* Last packet */
+        if (payload->size == packet_payload_size)
+            return false;
+
+        /* Set next seq to 0 */
+        message->seq_send = 0;
+        return true;
+    }
+    /* Cont paket */
+    struct packet_cont *packet = packet_cont_new(message->cid,
+            message->seq_send);
+    if (packet == NULL)
+        return true;
+
+    /* Compute the offset */
+    uint16_t offset = PACKET_INIT_DATA_SIZE
+            + message->seq_send * PACKET_CONT_DATA_SIZE;
+
+    /* Compute packet size */
+    size_t packet_payload_size = PACKET_CONT_DATA_SIZE;
+    if (offset + packet_payload_size >= payload->size)
+        packet_payload_size = payload->size - offset;
+
+    /* Copy data */
+    memcpy(packet->data,
+            payload->data + offset, packet_payload_size);
+
+    /* Packet ref */
+    *packet_ref = packet;
+
+
+    /* Last packet */
+    if (payload->size == offset + packet_payload_size)
+    {
+        message->seq_send = PACKET_CONT_MAX_SEQ + 1;
+        return false;
+    }
+
+    /* Increment seq */
+    ++message->seq_send;
+    return true;
+}
+
 void message_free(struct message *message)
 {
     payload_free(message->payload);

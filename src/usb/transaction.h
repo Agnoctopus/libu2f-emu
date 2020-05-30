@@ -41,5 +41,4 @@ bool transaction_timeout(const struct transaction *transaction);
 void transaction_start(struct transaction *transaction,
         struct message *request);
 
-
 #endif

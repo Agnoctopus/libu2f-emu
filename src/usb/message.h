@@ -89,6 +89,17 @@ bool message_add_part(struct message *message,
         const struct packet_cont *cont_packet);
 
 /**
+** \brief Get next packet part of a message for sending a message.
+**
+** \param message The message to get the next packet from.
+** \param packet_ref Packet reference to put the crafted packet.
+** \return End of message: false.
+**         Not end of message: true.
+*/
+bool message_next_packet(struct message *message,
+        void **packet_ref);
+
+/**
 ** \brief Free a message.
 **
 ** \param message The message to free.

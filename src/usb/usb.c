@@ -6,6 +6,7 @@
 #include "time.h"
 #include "usb.h"
 
+#include <stdio.h>
 
 /**
 ** \brief The packet init handler.
@@ -20,22 +21,24 @@ static struct message *packet_init_handle(struct usb_state *state,
 {
     /* Encapsule */
     struct message *request = message_new(packet);
-    request->cid = rand_r(&state->cid_seed);
+
+    /* Generate a new cid */
+    if (request->cid == BROADCAST_CID)
+        request->cid = rand_r(&state->cid_seed);
+
+    /* Transaction */
+    transaction_start(&state->transaction, request);
+    state->in_transaction = true;
 
     /* Check integrity */
     if (request->payload->size == request->bcnt)
     {
         /* Reponse */
         struct message *response = cmd_process(request);
-
-        /* Free */
-        message_free(request);
+        state->transaction.response = response;
 
         return response;
     }
-    /* Transaction */
-    transaction_start(&state->transaction, request);
-
     return NULL;
 }
 
@@ -61,12 +64,7 @@ static struct message *packet_cont_handle(struct usb_state *state,
     {
         /* Process */
         struct message *response = cmd_process(request);
-
-        /* End transaction */
-        state->in_transaction = false;
-
-        /* Free */
-        message_free(request);
+        state->transaction.response = response;
 
         return response;
     }
@@ -100,10 +98,8 @@ void u2f_emu_vdev_usb_process(void *state,
     {
         if (usb_state->in_transaction)
             response = cmd_generate_error(cid, ERROR_CHANNEL_BSY);
-        else if (cid == BROADCAST_CID)
-            response = packet_init_handle(usb_state, packet);
         else
-            response = cmd_generate_error(cid, ERROR_INVALID_CMD);
+            response = packet_init_handle(usb_state, packet);
     }
     else
     {
@@ -149,9 +145,32 @@ size_t u2f_emu_vdev_usb_get_response(void *state, uint8_t **data)
     /* USB state */
     struct usb_state *usb_state = state;
 
-    (void)data;
-    usb_state->response = NULL;
-    return 0;
+    /* Reset ref */
+    *data = NULL;
+
+    /* Check response precense */
+    if (!u2f_emu_vdev_usb_has_response(state))
+        return 0;
+
+    /* Next packet */
+    bool end = !message_next_packet(usb_state->response,
+            (void *)data);
+    if (end)
+    {
+        if (usb_state->in_transaction
+            && usb_state->response
+                == usb_state->transaction.response)
+        {
+            usb_state->in_transaction = false;
+            message_free(usb_state->transaction.request);
+        }
+        message_free(usb_state->response);
+        usb_state->response = NULL;
+    }
+    /* Error */
+    if (data == NULL)
+        return 0;
+    return PACKET_SIZE;
 }
 
 transport_t usb_transport =
