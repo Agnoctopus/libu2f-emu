@@ -3,8 +3,11 @@
 
 #include "cmd.h"
 #include "packet.h"
+#include "time.h"
 #include "usb.h"
+
 #include <stdio.h>
+
 
 /**
 ** \brief The packet init handler.
@@ -19,6 +22,7 @@ static struct message *packet_init_handle(struct usb_state *state,
 {
     /* Encapsule */
     struct message *request = message_new(packet);
+    request->cid = rand_r(&state->cid_seed);
 
     /* Check integrity */
     if (request->size == request->bcnt)
@@ -126,6 +130,7 @@ int u2f_emu_vdev_usb_state_init(void **state_ref)
 
     /* Attributes */
     state->in_transaction = false;
+    state->cid_seed = time(NULL);
 
     /* Referance */
     *(struct usb_state **)state_ref = state;

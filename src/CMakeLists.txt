@@ -31,6 +31,7 @@ set_target_properties(u2f-emu PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(u2f-emu PROPERTIES SOVERSION ${SO_VERSION})
 set_target_properties(u2f-emu PROPERTIES PUBLIC_HEADER "${HEADERS}")
 target_compile_options(u2f-emu PRIVATE -Wall -Wextra -pedantic -std=c99)
+target_compile_options(u2f-emu PRIVATE -D_GNU_SOURCE)
 install(TARGETS u2f-emu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/u2f-emu)
 

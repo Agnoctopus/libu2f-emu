@@ -59,7 +59,7 @@ static raw_cmd_handler_t raw_cmd_get_handler(uint8_t cmd)
 }
 
 /**
-** \brief The Handler for U2F_VERSION
+** \brief The Handler for U2F_VERSION raw cmd.
 **
 ** \param request The request
 ** \return The response

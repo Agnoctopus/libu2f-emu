@@ -2,6 +2,7 @@
 #define USB_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "message.h"
 #include "transaction.h"
@@ -13,9 +14,14 @@
 */
 struct usb_state
 {
+    /* Internal */
+    uint32_t cid_seed; /**< Seed used to generate random cid */
+
+    /* Messaging */
     struct transaction transaction; /**< Current transaction */
     bool in_transaction; /**< Are we in a transaction */
     struct message *response; /**< Last response */
+
 };
 
 /**
