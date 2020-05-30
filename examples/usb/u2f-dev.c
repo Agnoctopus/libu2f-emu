@@ -71,7 +71,6 @@ static void u2f_dev_uhid_info_init(
             sizeof(fido_u2f_desc));
 }
 
-#include <stdio.h>
 /**
 ** \brief Handler for incoming UHDI event for an U2F UHID
 **        USB device.
