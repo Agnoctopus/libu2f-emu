@@ -28,6 +28,7 @@ struct payload *payload_new_with_capacity(uint16_t capacity)
         free(payload);
         return NULL;
     }
+    payload->data = data;
 
     return payload;
 }
