@@ -9,8 +9,7 @@ u2f_emu_include_HEADERS = u2f-emu.h u2f-emu-types.h
 
 # General
 libu2f_emu_la_SOURCES = u2f-emu.h u2f-emu-types.h
-libu2f_emu_la_SOURCES += raw-message.h
-libu2f_emu_la_SOURCES += u2f-emu.c error.c raw-message.c
+libu2f_emu_la_SOURCES += u2f-emu.c error.c
 libu2f_emu_la_SOURCES += payload.c payload.h
 libu2f_emu_la_SOURCES += transport.c transport.h
 # USB
