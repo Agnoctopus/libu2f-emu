@@ -8,11 +8,8 @@ project(libu2f-emu VERSION 1.0.0 LANGUAGES C CXX
 # Gnu install dirs
 include(GNUInstallDirs)
 
-# Add sources subdirectory
-add_subdirectory(src)
-
-# Add examples subdirectory
-add_subdirectory(examples)
+# Openssl
+find_package(OpenSSL REQUIRED)
 
 # Doxygen
 find_package(Doxygen)
@@ -41,6 +38,12 @@ if(DOXYGEN_FOUND)
 else()
     message("Doxygen not found: continuing without Doxygen support")
 endif()
+
+# Add sources subdirectory
+add_subdirectory(src)
+
+# Add examples subdirectory
+add_subdirectory(examples)
 
 # Tests
 enable_testing()

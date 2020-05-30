@@ -61,6 +61,12 @@ LT_INIT([
 ACX_PTHREAD([HAVE_PTHREAD=1], [HAVE_PTHREAD=0])
 AM_CONDITIONAL([HAVE_PTHREAD], [test -n "$HAVE_PTHREAD"])
 
+PKG_CHECK_MODULES([OPENSSL], [libssl, libcrypto], [HAVE_SSL=1], [HAVE_SSL=0])
+AM_CONDITIONAL([HAVE_SSL], [test -n "$HAVE_SSL"])
+AM_COND_IF([HAVE_SSL],
+        AC_SUBST([OPENSSL_LIBS])
+)
+
 PKG_CHECK_MODULES([GTEST], [gtest, gtest_main], [HAVE_GTEST=1], [HAVE_GTEST=0])
 AM_CONDITIONAL([HAVE_GTEST], [test -n "$HAVE_GTEST"])
 AM_COND_IF([HAVE_GTEST],
@@ -70,7 +76,7 @@ AM_COND_IF([HAVE_GTEST],
 )
 
 # Checks for header files.
-AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h])
+AC_CHECK_HEADERS([fcntl.h stddef.h stdint.h stdlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE

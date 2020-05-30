@@ -8,15 +8,17 @@ endif()
 
 # Sources
 set (SRC
-    u2f-emu.c
+    crypto.c
     error.c
-    raw-message.c
+    payload.c
     transport.c
+    u2f-emu.c
     usb/cmd.c
     usb/message.c
     usb/packet.c
     usb/transaction.c
     usb/usb.c
+    raw/raw.c
     )
 
 # Headers
@@ -33,6 +35,7 @@ set_target_properties(u2f-emu PROPERTIES SOVERSION ${SO_VERSION})
 set_target_properties(u2f-emu PROPERTIES PUBLIC_HEADER "${HEADERS}")
 target_compile_options(u2f-emu PRIVATE -Wall -Wextra -pedantic -std=c99)
 target_compile_options(u2f-emu PRIVATE -D_GNU_SOURCE)
+target_link_libraries(u2f-emu OpenSSL::SSL)
 install(TARGETS u2f-emu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/u2f-emu)
 

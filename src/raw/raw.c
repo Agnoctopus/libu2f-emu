@@ -65,7 +65,8 @@ static raw_cmd_handler_t raw_cmd_get_handler(uint8_t cmd)
 ** \return The response
 */
 static struct payload *raw_version_handler(
-    const void *packet, size_t size)
+    const void *packet __attribute__((unused)),
+    size_t size __attribute__((unused)))
 {
     /* Payload */
     struct payload *payload = payload_new();
