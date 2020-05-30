@@ -138,9 +138,26 @@ int u2f_emu_vdev_usb_state_init(void **state_ref)
     return 0;
 }
 
+bool u2f_emu_vdev_usb_has_response(void *state)
+{
+    /* USB state */
+    struct usb_state *usb_state = state;
+
+    return usb_state->response != NULL;
+}
+
+size_t u2f_emu_vdev_usb_get_response(void *state, uint8_t **data)
+{
+    (void)state;
+    (void)data;
+    return 0;
+}
+
 transport_t usb_transport =
 {
     .type = U2F_EMU_USB,
     .state_init = u2f_emu_vdev_usb_state_init,
-    .input_handler = u2f_emu_vdev_usb_process
+    .input_handler = u2f_emu_vdev_usb_process,
+    .has_response = u2f_emu_vdev_usb_has_response,
+    .get_response = u2f_emu_vdev_usb_get_response
 };

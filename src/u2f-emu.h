@@ -63,7 +63,7 @@ u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
 ** \brief Check if an U2F virtual emulated device has response data
 **        To previous processed data.
 **
-** \param vdev The virtual device pointer.
+** \param vdev The virtual device.
 ** \return Has response: true.
 **         Has not response: false.
 */
@@ -72,7 +72,7 @@ bool u2f_emu_vdev_has_response(u2f_emu_vdev *vdev);
 /**
 ** \brief Get a response from an U2F virtual emulated device.
 **
-** \param vdev The virtual device pointer.
+** \param vdev The virtual device.
 ** \param data The data ref buffer to put the response.
 ** \return The size of the allocated data.
 */
