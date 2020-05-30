@@ -32,6 +32,32 @@ u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
     return U2F_EMU_OK;
 }
 
+bool u2f_emu_vdev_has_response(u2f_emu_vdev *vdev)
+{
+    /* Get the transport */
+    const transport_t *transport = transport_get(vdev->transport);
+
+    /* Transport existance */
+    if (transport == NULL)
+        return U2F_EMU_SUPPORTED_ERROR;
+
+    /* Check response precense */
+    return transport->has_response(vdev->transport_state);
+}
+
+size_t u2f_emu_vdev_get_response(u2f_emu_vdev *vdev, uint8_t **data)
+{
+    /* Get the transport */
+    const transport_t *transport = transport_get(vdev->transport);
+
+    /* Transport existance */
+    if (transport == NULL)
+        return U2F_EMU_SUPPORTED_ERROR;
+
+    /* Get response */
+    return transport->get_response(vdev->transport_state, data);
+}
+
 u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
     u2f_emu_apdu apdu)
 {
