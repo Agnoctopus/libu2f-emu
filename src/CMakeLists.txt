@@ -11,6 +11,7 @@ set (SRC
     u2f-emu.c
     error.c
     raw-message.c
+    transport.c
     usb/cmd.c
     usb/message.c
     usb/packet.c
