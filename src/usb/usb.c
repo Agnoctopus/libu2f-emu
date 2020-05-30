@@ -4,7 +4,7 @@
 #include "cmd.h"
 #include "packet.h"
 #include "usb.h"
-
+#include <stdio.h>
 
 /**
 ** \brief The packet init handler.
@@ -72,8 +72,8 @@ static struct message *packet_cont_handle(struct usb_state *state,
     return NULL;
 }
 
-void u2f_emu_vdev_usb_process(void *state, const void *packet,
-        size_t size)
+void u2f_emu_vdev_usb_process(void *state,
+        const void *packet, size_t size)
 {
     /* USB state */
     struct usb_state *usb_state = state;
@@ -84,49 +84,37 @@ void u2f_emu_vdev_usb_process(void *state, const void *packet,
     /* Check packet size */
     if (size != PACKET_SIZE)
     {
-        cmd_generate_error(cid, ERROR_INVALID_CMD);
+        usb_state->response =
+                cmd_generate_error(cid, ERROR_INVALID_CMD);
         return;
     }
 
     /* Gte the packet_type */
     bool is_init_packet = packet_is_init(packet);
+    struct message *response = NULL;
 
+    /* Siwtch packet type */
     if (is_init_packet)
     {
         if (usb_state->in_transaction)
-        {
-            cmd_generate_error(cid, ERROR_CHANNEL_BSY);
-            return;
-        }
+            response = cmd_generate_error(cid, ERROR_CHANNEL_BSY);
+        else if (cid == BROADCAST_CID)
+            response = packet_init_handle(usb_state, packet);
         else
-        {
-            packet_init_handle(usb_state, packet);
-            return;
-        }
+            response = cmd_generate_error(cid, ERROR_INVALID_CMD);
     }
     else
     {
-        if (!usb_state->in_transaction)
-        {
-            cmd_generate_error(cid, ERROR_INVALID_CMD);
-            return;
-        }
-
-        if (usb_state->transaction.request->cid == cid)
-        {
-            packet_cont_handle(usb_state, packet);
-            return;
-        }
+        if (usb_state->in_transaction
+            && usb_state->transaction.request->cid == cid)
+                response = packet_cont_handle(usb_state, packet);
         else
-        {
-            cmd_generate_error(cid, ERROR_CHANNEL_BSY);
-            return;
-        }
-
+            response = cmd_generate_error(cid, ERROR_INVALID_CMD);
     }
-    /* Should not happend */
 
-    return;
+    /* Override current response */
+    if (response != NULL)
+        usb_state->response = response;
 }
 
 int u2f_emu_vdev_usb_state_init(void **state_ref)
