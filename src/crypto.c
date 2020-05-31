@@ -11,6 +11,15 @@
 #include "crypto.h"
 
 
+int crypto_ec_key_to_bytes(EC_KEY *key, unsigned char **buffer)
+{
+    /* Reset buffer ref */
+    *buffer = NULL;
+
+    /* Get bytes */
+    return i2d_ECPrivateKey(key, buffer);
+}
+
 unsigned int crypto_ec_sign_with_key(EC_KEY *key,
     const unsigned char *digest,
     int digest_len,
