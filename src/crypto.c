@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <openssl/bio.h>
 #include <openssl/pem.h>
 
 #include "crypto.h"
@@ -127,14 +128,7 @@ static bool crypto_setup_entropy(int dirfd, const char *pathname,
     return ok;
 }
 
-/**
-** \brief Get the public key from the private key.
-**
-** \param privkey the privkey.
-** \return Success: The public key.
-**         Failure: NULL.
-*/
-static EC_KEY *crypto_ec_pubkey_from_priv(EC_KEY *privkey)
+EC_KEY *crypto_ec_pubkey_from_priv(EC_KEY *privkey)
 {
     /* Bio needed */
     BIO *pubkeybio = BIO_new(BIO_s_mem());

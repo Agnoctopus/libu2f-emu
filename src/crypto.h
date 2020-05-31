@@ -25,6 +25,14 @@ struct crypto_core
 };
 
 /**
+** \brief Get the ec public key from its private key.
+**
+** \param privkey the ec privkey.
+** \return The ec public key
+*/
+EC_KEY *crypto_ec_pubkey_from_priv(EC_KEY *privkey);
+
+/**
 ** \brief Generate an ec pair key.
 **
 ** \return Success: The generated ec pair key.
