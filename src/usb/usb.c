@@ -6,7 +6,6 @@
 #include "time.h"
 #include "usb.h"
 
-#include <stdio.h>
 
 /**
 ** \brief The packet init handler.
