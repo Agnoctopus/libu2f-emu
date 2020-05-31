@@ -10,6 +10,16 @@
 #include "crypto.h"
 
 
+int crypto_x509_get_bytes(struct crypto_core *crypto_core,
+        unsigned char **buffer)
+{
+    /* Reset buffer ref */
+    *buffer = NULL;
+
+    /* Delegate */
+    return i2d_X509(crypto_core->cert, buffer);
+}
+
 EC_KEY *crypto_ec_generate_key(void)
 {
     /* Prepare ec key */

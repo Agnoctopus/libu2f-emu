@@ -24,6 +24,17 @@ struct crypto_core
     uint8_t entropy[48]; /**< Random bits used in encryption */
 };
 
+
+/**
+** \brief Get the x509 certificate bytes.
+**
+** \param crypto_core The crypto core.
+** \param buffer The buffer to put the bytes.
+** \return The buffer length.
+*/
+int crypto_x509_get_bytes(struct crypto_core *crypto_core,
+        unsigned char **buffer);
+
 /**
 ** \brief Get the ec public key from its private key.
 **
