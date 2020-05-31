@@ -1,4 +1,5 @@
 #include <err.h>
+#include <stdio.h>
 
 #include "uhid-dev.h"
 #include "u2f-dev.h"
@@ -7,14 +8,24 @@
 /**
 ** \brief Main function of the program.
 **
+** \param argc Argc.
+** \param argv Argv.
 ** \return Success: 0.
 **         Failure: 1.
 */
-int main(void)
+int main(int argc, char *argv[])
 {
+    /* Setup dir */
+    if (argc <= 1)
+    {
+        fprintf(stderr, "Usage: %s <setup_dir>\n", argv[0]);
+        return 1;
+    }
+    const char *setup_dir = argv[1];
+
     /* New U2F virtual emulatted device */
     u2f_emu_vdev *vdev = NULL;
-    if (u2f_emu_vdev_new(&vdev, U2F_EMU_USB) != U2F_EMU_OK)
+    if (u2f_emu_vdev_new(&vdev, U2F_EMU_USB, setup_dir) != U2F_EMU_OK)
     {
         /* Log */
         warnx("Failed to create a new U2F virtual emulated device.");
