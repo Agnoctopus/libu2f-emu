@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -9,6 +10,35 @@
 
 #include "crypto.h"
 
+
+size_t crypto_hash(const void *data, size_t data_len,
+        unsigned char **hash)
+{
+    /* Init */
+    SHA256_CTX sha256;
+    if (SHA256_Init(&sha256) != 1)
+        return 0;
+
+    /* Allocate hash buffer */
+    *hash = malloc(SHA256_DIGEST_LENGTH);
+
+    /* Update */
+    if (SHA256_Update(&sha256, data, data_len) != 1)
+    {
+        /* Release */
+        free(hash);
+        return 0;
+    }
+
+    /* Finish */
+    if(SHA256_Final(*hash, &sha256) != 1)
+    {
+        /* Release */
+        free(hash);
+        return 0;
+    }
+    return SHA256_DIGEST_LENGTH;
+}
 
 size_t crypto_ec_pubkey_to_bytes(const EC_KEY *key,
     unsigned char **buffer)

@@ -26,6 +26,17 @@ struct crypto_core
 
 
 /**
+** \brief Hash data using sha256.
+**
+** \param data The data.
+** \param data_len The data length.
+** \param hash The ref buffer to put the hash.
+** \return The size of the hash.
+*/
+size_t crypto_hash(const void *data, size_t data_len,
+        unsigned char **hash);
+
+/**
 ** \brief Get the ec key bytes.
 **
 ** \param key The ec key.
