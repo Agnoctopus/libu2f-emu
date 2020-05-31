@@ -10,6 +10,24 @@
 #include "crypto.h"
 
 
+size_t crypto_ec_pubkey_to_bytes(const EC_KEY *key,
+    unsigned char **buffer)
+{
+    /* bignum context */
+    BN_CTX *bn_ctx = BN_CTX_new();
+    if (bn_ctx == NULL)
+        return 0;
+
+    size_t size = EC_KEY_key2buf(key,
+            POINT_CONVERSION_UNCOMPRESSED,
+            buffer,
+            bn_ctx);
+
+    /* Free */
+    BN_CTX_free(bn_ctx);
+    return size;
+}
+
 int crypto_x509_get_bytes(struct crypto_core *crypto_core,
         unsigned char **buffer)
 {

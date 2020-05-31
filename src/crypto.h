@@ -26,6 +26,16 @@ struct crypto_core
 
 
 /**
+** \brief Get the ec key bytes.
+**
+** \param key The ec key.
+** \param buffer The buffer use to put the bytes.
+** \return The size of the buffer.
+*/
+size_t crypto_ec_pubkey_to_bytes(const EC_KEY *key,
+    unsigned char **buffer);
+
+/**
 ** \brief Get the x509 certificate bytes.
 **
 ** \param crypto_core The crypto core.
