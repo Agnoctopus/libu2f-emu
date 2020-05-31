@@ -65,6 +65,7 @@ u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
 void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
 {
     /* Release */
+    crypto_release(&vdev->crypto_core);
     free(vdev);
 }
 
@@ -126,7 +127,7 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     }
 
     /* Crypto core */
-    if (!crypto_setup_from_dir(setup_dir, &vdev->cyrpto_core))
+    if (!crypto_setup_from_dir(setup_dir, &vdev->crypto_core))
     {
         free(vdev);
         return U2F_EMU_MEMORY_ERROR;

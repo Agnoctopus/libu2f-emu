@@ -16,7 +16,7 @@ struct u2f_emu_vdev
     void *transport_state; /**< Transport state */
 
     /* Crypto core */
-    struct crypto_core cyrpto_core; /**< Crypto core */
+    struct crypto_core crypto_core; /**< Crypto core */
 };
 
 
