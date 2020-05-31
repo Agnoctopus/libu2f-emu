@@ -112,7 +112,7 @@ bool message_add_part(struct message *message,
     /* Get current seq */
     uint8_t seq = 0;
     if (message->bcnt > PACKET_INIT_DATA_SIZE)
-        seq = (message->bcnt - PACKET_INIT_DATA_SIZE)
+        seq = (message->payload->size - PACKET_INIT_DATA_SIZE)
             / PACKET_CONT_DATA_SIZE;
 
     /* Check seq */
