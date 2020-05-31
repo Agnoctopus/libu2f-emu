@@ -9,6 +9,23 @@
 #include "crypto.h"
 
 
+EC_KEY *crypto_ec_generate_key(void)
+{
+    /* Prepare ec key */
+    EC_KEY *key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+    if (key == NULL)
+        return NULL;
+
+    /* Generate */
+    if (EC_KEY_generate_key(key) != 1)
+    {
+        /* Release */
+        EC_KEY_free(key);
+        return NULL;
+    }
+    return key;
+}
+
 /**
 ** \brief Open a file.
 **

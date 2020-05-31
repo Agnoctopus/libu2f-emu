@@ -25,6 +25,14 @@ struct crypto_core
 };
 
 /**
+** \brief Generate an ec pair key.
+**
+** \return Success: The generated ec pair key.
+**         Failure: NULL.
+*/
+EC_KEY *crypto_ec_generate_key(void);
+
+/**
 ** \brief Setup a crypto core from a dir.
 **
 ** \param pathname The pathname of the dir
