@@ -86,7 +86,6 @@ static struct payload *raw_version(
     return payload;
 }
 
-
 struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
         const void *apdu, size_t size)
 {

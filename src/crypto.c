@@ -11,6 +11,17 @@
 #include "crypto.h"
 
 
+EC_KEY *crypto_ec_bytes_to_key(const unsigned char *buffer,
+    long size)
+{
+    /* prepare curve and key */
+    EC_KEY *key = NULL;
+
+    /* Get key */
+    key = d2i_ECPrivateKey(&key, &buffer, size);
+    return key;
+}
+
 size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
         const unsigned char *data, int size,
         unsigned char **buffer)

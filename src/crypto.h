@@ -25,6 +25,16 @@ struct crypto_core
 };
 
 /**
+** \brief Get the ec key from ec key bytes.
+**
+** \param buffer The buffer containing the ec key bytes.
+** \param size The size of the buffer.
+** \return The ec key.
+*/
+EC_KEY *crypto_ec_bytes_to_key(const unsigned char *buffer,
+        long size);
+
+/**
 ** \brief Decrypt data using AES.
 **
 ** \param data The data to decrypt.
