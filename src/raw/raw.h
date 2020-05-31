@@ -47,9 +47,10 @@ struct frame_header
 /**
 ** \brief Process incoming data from a RAW APDU.
 **
+** \param vdev The virtual device.
 ** \param apdu The RAW APDU packet.
 ** \param size The size of the RAW APDU packet.
-** \param apdu_format The APDU format.
+** \return The response payload.
 */
 struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
         const void *apdu, size_t size);
@@ -58,8 +59,10 @@ struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
 /**
 ** \brief Handle authentification request.
 **
-** \param request The authentification request message
-** \return The response
+** \param vdev The virtual device.
+** \param apdu The apdu data.
+** \param size The apdu data size.
+** \return The response payload.
 */
 struct payload *raw_authenticate(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size);
@@ -67,8 +70,10 @@ struct payload *raw_authenticate(u2f_emu_vdev *vdev,
 /**
 ** \brief Handle registration request.
 **
-** \param request The registration request message
-** \return The response or null if no response
+** \param vdev The virtual device.
+** \param apdu The apdu data.
+** \param size The apdu data size.
+** \return The response payload.
 */
 struct payload *raw_register(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size);

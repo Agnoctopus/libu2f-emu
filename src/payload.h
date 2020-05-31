@@ -55,7 +55,7 @@ struct payload *payload_new_from_data(const uint8_t *data,
 /**
 ** \brief Add data to a payload.
 **
-** \param message The payload to add data to.
+** \param payload The payload to add data to.
 ** \param data The data to add.
 ** \param size The size of the data.
 ** \return Success: true.
@@ -67,7 +67,7 @@ bool payload_add_data(struct payload *payload,
 /**
 ** \brief Free a payload.
 **
-** \param message The payload to free.
+** \param payload The payload to free.
 */
 void payload_free(struct payload *payload);
 

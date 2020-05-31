@@ -35,6 +35,7 @@ struct usb_state
 /**
 ** \brief Init the USB state.
 **
+** \param vdev The virtual device.
 ** \param state_ref The USB transport state ref.
 ** \return Sucess: 0.
 **         Failure: -errno.

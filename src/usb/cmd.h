@@ -75,6 +75,7 @@ struct message *cmd_generate_error(uint32_t cid, uint8_t error);
 /**
 ** \brief Process a command request.
 **
+** \param state The USB transport state.
 ** \param request The command request message.
 ** \return The reponse generated bu the request process.
 */

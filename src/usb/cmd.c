@@ -124,6 +124,7 @@ struct message *cmd_generate_error(uint32_t cid, uint8_t error)
 /**
 ** \brief The Handler for CMD_PING.
 **
+** \param state The USB transport state.
 ** \param request The request.
 ** \return The response.
 */
@@ -138,6 +139,7 @@ static struct message *cmd_ping_handler(
 /**
 ** \brief The Handler for CMD_MSG.
 **
+** \param state The USB transport state.
 ** \param request The request.
 ** \return The response.
 */
@@ -164,6 +166,7 @@ static struct message *cmd_msg_handler(
 /**
 ** \brief The Handler for CMD_LOCK.
 **
+** \param state The USB transport state.
 ** \param request The request.
 ** \return The response.
 */
@@ -178,6 +181,7 @@ static struct message *cmd_lock_handler(
 /**
 ** \brief The Handler for CMD_WINK.
 **
+** \param state The USB transport state.
 ** \param request The request.
 ** \return The response.
 */
@@ -192,6 +196,7 @@ static struct message *cmd_wink_handler(
 /**
 ** \brief The Handler for CMD_INIT.
 **
+** \param state The USB transport state.
 ** \param request The request
 ** \return The response.
 */
@@ -230,6 +235,7 @@ static struct message *cmd_init_handler(
 /**
 ** \brief The Handler for CMD_SYNC.
 **
+** \param state The USB transport state.
 ** \param request The request.
 ** \return The response.
 */
@@ -244,6 +250,7 @@ static struct message *cmd_sync_handler(
 /**
 ** \brief The Handler for CMD_ERROR.
 **
+** \param state The USB transport state.
 ** \param request The request.
 ** \return The response.
 */

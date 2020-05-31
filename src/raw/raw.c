@@ -62,12 +62,14 @@ static raw_cmd_handler_t raw_cmd_get_handler(uint8_t cmd)
 /**
 ** \brief The Handler for U2F_VERSION raw cmd.
 **
-** \param request The request
-** \return The response
+** \param vdev The virtual device.
+** \param apdu The apdu data.
+** \param size The apdu data size.
+** \return The response.
 */
 static struct payload *raw_version(
     u2f_emu_vdev *vdev __attribute__((unused)),
-    const uint8_t *packet __attribute__((unused)),
+    const uint8_t *apdu __attribute__((unused)),
     size_t size __attribute__((unused)))
 {
     /* Payload */

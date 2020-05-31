@@ -37,6 +37,7 @@ EC_KEY *crypto_ec_bytes_to_key(const unsigned char *buffer,
 /**
 ** \brief Decrypt data using AES.
 **
+** \param crypto_core The crypto core.
 ** \param data The data to decrypt.
 ** \param size The data size.
 ** \param buffer The resulting buffer where clear data is put.
@@ -49,6 +50,7 @@ size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
 /**
 ** \brief Encrypt data using AES.
 **
+** \param crypto_core The crypto core.
 ** \param data The data to encrypt.
 ** \param data_len The data size.
 ** \param buffer The resulting buffer where cipher data is put.
@@ -74,7 +76,7 @@ int crypto_ec_key_to_bytes(EC_KEY *key, unsigned char **buffer);
 ** \param digest The digest.
 ** \param digest_len The digest len.
 ** \param signature The ref buffer to put the signature.
-** \returnThe size of the signature.
+** \return The size of the signature.
 */
 unsigned int crypto_ec_sign_with_key(EC_KEY *key,
         const unsigned char *digest,
@@ -84,6 +86,7 @@ unsigned int crypto_ec_sign_with_key(EC_KEY *key,
 /**
 ** \brief Sign a digest.
 **
+** \param crypto_core The crypto core.
 ** \param digest The digest.
 ** \param digest_len The digest length?
 ** \param signature The ref buffer to put the signature.

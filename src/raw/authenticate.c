@@ -64,7 +64,7 @@ static void authenticate_response_counter(struct payload *payload,
 /**
 ** \brief Add the signature to the authentification response payload.
 **
-** \param response The response payload.
+** \param payload The response payload.
 ** \param key The key used to sign.
 ** \param params The authentification params.
 ** \param presence The user presence.
@@ -159,10 +159,11 @@ static void authenticate_response_sw(struct payload *payload,
 /**
 ** \brief Get the ciphered key handle from the request
 **
-** \param request The request
-** \param params The authentification response
-** \param size The ref size of the ciphered key handle
-** \return The ciphered key handle
+** \param apdu The apdu data.
+** \param apdu_size The apdu data size.
+** \param params The authentification response.
+** \param size The ref size of the ciphered key handle.
+** \return The ciphered key handle.
 */
 static uint8_t *authenticate_get_key_handle_cipher(
         const uint8_t *apdu, size_t apdu_size,
@@ -188,12 +189,13 @@ static uint8_t *authenticate_get_key_handle_cipher(
 }
 
 /**
-** \brief Decrypt ciphered key handle
+** \brief Decrypt ciphered key handle.
 **
-** \param key_handle_cipher The ciphered key handle
-** \param key_handle_cipher_size The ciphered key handle size
-** \param size The ref size of the plain key handle
-** \return The plain key handle
+** \param crypto_core The crypto core.
+** \param key_handle_cipher The ciphered key handle.
+** \param key_handle_cipher_size The ciphered key handle size.
+** \param size The ref size of the plain key handle.
+** \return The plain key handle.
 */
 static uint8_t *authenticate_decrypt_key_handle_cipher(
         struct crypto_core *crypto_core,
@@ -233,10 +235,12 @@ static EC_KEY *authenticate_get_pubkey_from_key_handle(
 }
 
 /**
-** \brief Handle check authentification request
+** \brief Handle check authentification request.
 **
-** \param request The check authentification request message
-** \return The response
+** \param vdev The virtual device.
+** \param apdu The apdu data.
+** \param size The apdu data size.
+** \return The response payload.
 */
 static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)
@@ -280,10 +284,12 @@ static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
 }
 
 /**
-** \brief Handle enforce authentification request
+** \brief Handle enforce authentification request.
 **
-** \param request The enforce authentification request message
-** \return The response
+** \param vdev The virtual device.
+** \param apdu The apdu data.
+** \param size The apdu data size.
+** \return The response payload.
 */
 static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)
@@ -339,10 +345,12 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
 }
 
 /**
-** \brief Handle no enforce authentification request
+** \brief Handle no enforce authentification request.
 **
-** \param request The no enforce authentification request message
-** \return The response
+** \param vdev The virtual device.
+** \param apdu The apdu data.
+** \param size The apdu data size.
+** \return The response payload.
 */
 static struct payload *raw_authenticate_no_enforce(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)

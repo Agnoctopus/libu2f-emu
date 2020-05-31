@@ -98,6 +98,7 @@ static void register_reponse_x509(struct payload *payload,
 
 /** \brief Add signature to the register response.
 **
+** \param crypto_core The crypto core.
 ** \param payload The response payload.
 ** \param key_handle_cipher The ciphered key handle.
 ** \param key_handle_cipher_size The ciphered key handle size.
@@ -238,6 +239,7 @@ static uint8_t *register_build_plain_key_handle(
 /**
 ** \brief Encrypt the key handle.
 **
+** \param crypto_core The crypto core.
 ** \param key_handle The key handle.
 ** \param key_handle_size The key handle size.
 ** \param size The ref size of the ciphered key handle.
