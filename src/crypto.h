@@ -24,6 +24,17 @@ struct crypto_core
     uint8_t entropy[48]; /**< Random bits used in encryption */
 };
 
+/**
+** \brief Encrypt data using AES.
+**
+** \param data The data to encrypt.
+** \param data_len The data size.
+** \param buffer The resulting buffer where cipher data is put.
+** \return The size of the buffer.
+*/
+size_t crypto_aes_encrypt(struct crypto_core* crypto_core,
+        const unsigned char *data, int data_len,
+        unsigned char **buffer);
 
 /**
 ** \brief Get the ec key bytes.

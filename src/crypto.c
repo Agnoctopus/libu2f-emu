@@ -11,6 +11,64 @@
 #include "crypto.h"
 
 
+size_t crypto_aes_encrypt(struct crypto_core* crypto_core,
+        const unsigned char *data, int data_len,
+        unsigned char **buffer)
+{
+    /* Cipher context */
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (ctx == NULL)
+        return 0;
+
+    /* Init operation */
+    if (EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(),
+        NULL, NULL, NULL) != 1)
+    {
+        /* Release */
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
+
+    /* Init and key */
+    if (EVP_EncryptInit_ex(ctx, NULL,
+        NULL, crypto_core->entropy, crypto_core->entropy + 32) != 1)
+    {
+        /* Release */
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
+
+    /* Allocate */
+    *buffer = malloc(data_len + 32);
+    int len = 0;
+
+    /* Encrypt */
+    if (EVP_EncryptUpdate(ctx, *buffer, &len, data, data_len) != 1)
+    {
+        /* Free */
+        EVP_CIPHER_CTX_free(ctx);
+        free(*buffer);
+
+        return 0;
+    }
+    size_t result_len = len;
+
+    if (EVP_EncryptFinal_ex(ctx, (*buffer) + len, &len) != 1)
+    {
+        /* Free */
+        EVP_CIPHER_CTX_free(ctx);
+        free(*buffer);
+
+        return 0;
+    }
+    result_len += len;
+
+    /* Free */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return result_len;;
+}
+
 int crypto_ec_key_to_bytes(EC_KEY *key, unsigned char **buffer)
 {
     /* Reset buffer ref */
