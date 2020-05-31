@@ -34,7 +34,7 @@ static struct message *packet_init_handle(struct usb_state *state,
     if (request->payload->size == request->bcnt)
     {
         /* Reponse */
-        struct message *response = cmd_process(request);
+        struct message *response = cmd_process(state, request);
         state->transaction.response = response;
 
         return response;
@@ -63,7 +63,7 @@ static struct message *packet_cont_handle(struct usb_state *state,
     if (request->payload->size == request->bcnt)
     {
         /* Process */
-        struct message *response = cmd_process(request);
+        struct message *response = cmd_process(state, request);
         state->transaction.response = response;
 
         return response;

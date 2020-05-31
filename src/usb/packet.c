@@ -4,8 +4,6 @@
 
 #include "cmd.h"
 #include "packet.h"
-#include "transaction.h"
-
 
 
 struct packet_init *packet_init_new(uint32_t cid, uint8_t cmd,

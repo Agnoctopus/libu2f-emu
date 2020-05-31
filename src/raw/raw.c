@@ -7,7 +7,8 @@
 ** \brief Raw cmd handler for U2F APDU processing.
 */
 typedef
-struct payload *(*raw_cmd_handler_t)(const void *packet, size_t size);
+struct payload *(*raw_cmd_handler_t)(u2f_emu_vdev *vdev,
+        const uint8_t *packet, size_t size);
 
 /**
 ** \brief Raw command of U2F APDU.
@@ -18,9 +19,9 @@ typedef struct raw_cmd
     raw_cmd_handler_t handler; /**< The raw command handler */
 } raw_cmd_t;
 
-/* Forward declaration of raw command versio handler */
-static struct payload *raw_version_handler(
-    const void *packet, size_t size);
+/* Forward declaration of raw command version handler */
+static struct payload *raw_version(u2f_emu_vdev *vdev,
+        const uint8_t *packet, size_t size);
 
 /**
 ** \brief Raw commands handlers for U2F APDU commands processing,
@@ -28,9 +29,9 @@ static struct payload *raw_version_handler(
 */
 static const raw_cmd_t raw_cmds[] =
 {
-    { U2F_REGISTER,       raw_register_handler     },
-    { U2F_AUTHENTICATE,   raw_authenticate_handler },
-    { U2F_VERSION,        raw_version_handler      },
+    { U2F_REGISTER,       raw_register     },
+    { U2F_AUTHENTICATE,   raw_authenticate },
+    { U2F_VERSION,        raw_version      },
 };
 
 
@@ -64,8 +65,9 @@ static raw_cmd_handler_t raw_cmd_get_handler(uint8_t cmd)
 ** \param request The request
 ** \return The response
 */
-static struct payload *raw_version_handler(
-    const void *packet __attribute__((unused)),
+static struct payload *raw_version(
+    u2f_emu_vdev *vdev __attribute__((unused)),
+    const uint8_t *packet __attribute__((unused)),
     size_t size __attribute__((unused)))
 {
     /* Payload */
@@ -85,18 +87,16 @@ static struct payload *raw_version_handler(
 }
 
 
-struct payload * u2f_emu_vdev_raw_process(
-        const void *packet, size_t size, u2f_emu_apdu apdu)
+struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
+        const void *apdu, size_t size)
 {
-    (void)apdu;
-
     /* Get frame header */
-    struct frame_header *header = (struct frame_header *)packet;
+    struct frame_header *header = (struct frame_header *)apdu;
 
     /* Get raw handler */
     raw_cmd_handler_t handler = raw_cmd_get_handler(header->ins);
     if (handler == NULL)
         return NULL;
 
-    return handler(packet, size);
+    return handler(vdev, apdu, size);
 }

@@ -9,22 +9,30 @@
 ** \brief Commands handler for U2FHID commands processing.
 */
 typedef
-struct message *(*cmd_handler_t)(const struct message *request);
+struct message *(*cmd_handler_t)(struct usb_state *state,
+        const struct message *request);
 
 /* All commands handler declaration */
 static struct message *cmd_ping_handler(
+        struct usb_state *state,
         const struct message *request);
 static struct message *cmd_msg_handler(
+        struct usb_state *state,
         const struct message *request);
 static struct message *cmd_lock_handler(
+        struct usb_state *state,
         const struct message *request);
 static struct message *cmd_init_handler(
+        struct usb_state *state,
         const struct message *request);
 static struct message *cmd_wink_handler(
+        struct usb_state *state,
         const struct message *request);
 static struct message *cmd_sync_handler(
+        struct usb_state *state,
         const struct message *request);
 static struct message *cmd_error_handler(
+        struct usb_state *state,
         const struct message *request);
 
 /**
@@ -120,7 +128,8 @@ struct message *cmd_generate_error(uint32_t cid, uint8_t error)
 ** \return The response.
 */
 static struct message *cmd_ping_handler(
-    const struct message *request)
+        struct usb_state *state,
+        const struct message *request)
 {
     (void) request;
     return NULL;
@@ -133,12 +142,14 @@ static struct message *cmd_ping_handler(
 ** \return The response.
 */
 static struct message *cmd_msg_handler(
-    const struct message *request)
+        struct usb_state *state,
+        const struct message *request)
 {
     /* Process Data */
     struct payload *payload = u2f_emu_vdev_raw_process(
+            state->vdev,
             request->payload->data,
-            request->payload->size, U2F_EMU_EXTENDED);
+            request->payload->size);
 
     /* Encapsulate in a message */
     struct message *response = message_new_from_data(request->cid,
@@ -157,7 +168,8 @@ static struct message *cmd_msg_handler(
 ** \return The response.
 */
 static struct message *cmd_lock_handler(
-    const struct message *request)
+        struct usb_state *state,
+        const struct message *request)
 {
     (void) request;
     return NULL;
@@ -170,7 +182,8 @@ static struct message *cmd_lock_handler(
 ** \return The response.
 */
 static struct message *cmd_wink_handler(
-    const struct message *request)
+        struct usb_state *state,
+        const struct message *request)
 {
     (void) request;
     return NULL;
@@ -183,6 +196,7 @@ static struct message *cmd_wink_handler(
 ** \return The response.
 */
 static struct message *cmd_init_handler(
+        struct usb_state *state,
         const struct message *request)
 {
     /* Check message size*/
@@ -220,7 +234,8 @@ static struct message *cmd_init_handler(
 ** \return The response.
 */
 static struct message *cmd_sync_handler(
-    const struct message *request)
+        struct usb_state *state,
+        const struct message *request)
 {
     (void) request;
     return NULL;
@@ -233,13 +248,15 @@ static struct message *cmd_sync_handler(
 ** \return The response.
 */
 static struct message *cmd_error_handler(
-    const struct message *request)
+        struct usb_state *state,
+        const struct message *request)
 {
     (void) request;
     return NULL;
 }
 
-struct message *cmd_process(const struct message *request)
+struct message *cmd_process(struct usb_state *state,
+        const struct message *request)
 {
     /* Get the handler */
     cmd_handler_t handler = cmd_get_handler(request->cmd);
@@ -250,5 +267,5 @@ struct message *cmd_process(const struct message *request)
                 ERROR_INVALID_CMD);
 
     /* Process it */
-    return handler(request);
+    return handler(state, request);
 }

@@ -47,12 +47,12 @@ struct frame_header
 /**
 ** \brief Process incoming data from a RAW APDU.
 **
-** \param packet The RAW APDU packet.
+** \param apdu The RAW APDU packet.
 ** \param size The size of the RAW APDU packet.
-** \param apdu The APDU format.
+** \param apdu_format The APDU format.
 */
-struct payload * u2f_emu_vdev_raw_process(
-        const void *packet, size_t size, u2f_emu_apdu apdu);
+struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
+        const void *apdu, size_t size);
 
 
 /**
@@ -61,8 +61,8 @@ struct payload * u2f_emu_vdev_raw_process(
 ** \param request The authentification request message
 ** \return The response
 */
-struct payload *raw_authenticate_handler(
-        const void *packet, size_t size);
+struct payload *raw_authenticate(u2f_emu_vdev *vdev,
+        const uint8_t *apdu, size_t size);
 
 /**
 ** \brief Handle registration request.
@@ -70,7 +70,7 @@ struct payload *raw_authenticate_handler(
 ** \param request The registration request message
 ** \return The response or null if no response
 */
-struct payload *raw_register_handler(
-        const void *packet, size_t size);
+struct payload *raw_register(u2f_emu_vdev *vdev,
+        const uint8_t *apdu, size_t size);
 
 #endif

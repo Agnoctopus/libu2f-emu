@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "message.h"
+#include "usb.h"
 
 
 /* bit macro */
@@ -77,7 +78,8 @@ struct message *cmd_generate_error(uint32_t cid, uint8_t error);
 ** \param request The command request message.
 ** \return The reponse generated bu the request process.
 */
-struct message *cmd_process(const struct message *request);
+struct message *cmd_process(struct usb_state *state,
+        const struct message *request);
 
 
 #endif
