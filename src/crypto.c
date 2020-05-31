@@ -11,6 +11,65 @@
 #include "crypto.h"
 
 
+size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
+        const unsigned char *data, int size,
+        unsigned char **buffer)
+{
+    /* Cipher context */
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (ctx == NULL)
+        return 0;
+
+    /* Init operation */
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(),
+        NULL, NULL, NULL) != 1)
+    {
+        /* Release  */
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
+
+    /* Init and key */
+    if (EVP_DecryptInit_ex(ctx, NULL, NULL,
+            crypto_core->entropy, crypto_core->entropy + 32) != 1)
+    {
+        /* Free */
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
+
+    /* Allocate */
+    *buffer = malloc(size + 32);
+    int len = 0;
+    size_t result_len = 0;
+
+    /* Decrypr */
+    if (EVP_DecryptUpdate(ctx, *buffer, &len, data, size) != 1)
+    {
+        /* Free */
+        EVP_CIPHER_CTX_free(ctx);
+        free(*buffer);
+
+        return 0;
+    }
+    result_len = len;
+
+    if (EVP_DecryptFinal_ex(ctx, (*buffer) + len, &len) != 1)
+    {
+        /* Free */
+        EVP_CIPHER_CTX_free(ctx);
+        free(*buffer);
+
+        return 0;
+    }
+    result_len += len;
+
+    /* Free */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return result_len;
+}
+
 size_t crypto_aes_encrypt(struct crypto_core* crypto_core,
         const unsigned char *data, int data_len,
         unsigned char **buffer)

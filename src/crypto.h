@@ -25,6 +25,18 @@ struct crypto_core
 };
 
 /**
+** \brief Decrypt data using AES.
+**
+** \param data The data to decrypt.
+** \param size The data size.
+** \param buffer The resulting buffer where clear data is put.
+** \return The size of the buffer.
+*/
+size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
+        const unsigned char *data, int size,
+        unsigned char **buffer);
+
+/**
 ** \brief Encrypt data using AES.
 **
 ** \param data The data to encrypt.
