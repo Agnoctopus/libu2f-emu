@@ -24,6 +24,32 @@ struct crypto_core
     uint8_t entropy[48]; /**< Random bits used in encryption */
 };
 
+/**
+** \brief Sign a digest with a specific key.
+**
+** \param key The ec key.
+** \param digest The digest.
+** \param digest_len The digest len.
+** \param signature The ref buffer to put the signature.
+** \returnThe size of the signature.
+*/
+unsigned int crypto_ec_sign_with_key(EC_KEY *key,
+    const unsigned char *digest,
+    int digest_len,
+    unsigned char **signature);
+
+/**
+** \brief Sign a digest.
+**
+** \param digest The digest.
+** \param digest_len The digest length?
+** \param signature The ref buffer to put the signature.
+** \return The size of the signature.
+*/
+unsigned int crypto_ec_sign(struct crypto_core *crypto_core,
+    const unsigned char *digest,
+    int digest_len,
+    unsigned char **signature);
 
 /**
 ** \brief Hash data using sha256.

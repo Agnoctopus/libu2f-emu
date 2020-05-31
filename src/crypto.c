@@ -11,6 +11,69 @@
 #include "crypto.h"
 
 
+unsigned int crypto_ec_sign_with_key(EC_KEY *key,
+    const unsigned char *digest,
+    int digest_len,
+    unsigned char **signature)
+{
+    /* Signature length  */
+    *signature = NULL;
+    int ret_size = ECDSA_size(key);
+    if (ret_size <= 0)
+        return 0;
+
+    unsigned int signature_len = ret_size;
+
+    /* Signature buffer */
+    *signature = OPENSSL_malloc(signature_len);
+    if (*signature == NULL)
+        return 0;
+
+    /* Sign */
+    int sign_ret = ECDSA_sign(0,
+            digest,
+            digest_len,
+            *signature,
+            &signature_len,
+            key);
+
+    /* Sign check */
+    if (sign_ret != 1)
+    {
+        /* Release */
+        free(*signature);
+        *signature = NULL;
+        return 0;
+    }
+
+    /* Verify the signature */
+    int verify_ret = ECDSA_verify(0,
+            digest,
+            digest_len,
+            *signature,
+            signature_len,
+            key);
+
+    /* Verify check */
+    if (verify_ret != 1)
+    {
+        /* Release */
+        free(*signature);
+        *signature = NULL;
+        return 0;
+    }
+    return signature_len;
+}
+
+unsigned int crypto_ec_sign(struct crypto_core *crypto_core,
+    const unsigned char *digest,
+    int digest_len,
+    unsigned char **signature)
+{
+    return crypto_ec_sign_with_key(crypto_core->privkey,
+        digest, digest_len, signature);
+}
+
 size_t crypto_hash(const void *data, size_t data_len,
         unsigned char **hash)
 {
