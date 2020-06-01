@@ -35,19 +35,11 @@ target_include_directories(u2f-emu PRIVATE .)
 set_target_properties(u2f-emu PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(u2f-emu PROPERTIES SOVERSION ${SO_VERSION})
 set_target_properties(u2f-emu PROPERTIES PUBLIC_HEADER "${HEADERS}")
-target_compile_options(u2f-emu PRIVATE -Wall -Wextra -pedantic -std=c99)
+target_compile_options(u2f-emu PRIVATE -Wall -Wextra -Werror -pedantic -std=c99 ${EXTRA_FLAGS})
 target_compile_options(u2f-emu PRIVATE -D_GNU_SOURCE)
-target_link_libraries(u2f-emu OpenSSL::SSL)
+target_link_libraries(u2f-emu OpenSSL::SSL gcov)
 install(TARGETS u2f-emu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/u2f-emu)
-
-# Flags
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_compile_options(u2f-emu PRIVATE -g0 -O2)
-endif()
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(u2f-emu PRIVATE -g3 -O0)
-endif()
 
 # Pkgconfig
 set (version ${SO_VERSION})

@@ -42,6 +42,13 @@ if test -z "$DOT"; then
         AC_MSG_WARN([Dot not found: for pretty documentation])
 fi
 
+# Coverage
+AC_ARG_ENABLE([coverage],
+        [AS_HELP_STRING([--enable-coverage], [Enable coverage])], [
+                CFLAGS="$CFLAGS -g3 -O0 -fprofile-arcs -ftest-coverage"
+                CXXFLAGS="$CXXFLAGS -fprofile-arcs -ftest-coverage"
+                LDFLAGS="$LDFLAGS -lgcov"])
+
 # Compiler flags
 AX_COMPILER_FLAGS
 AX_CHECK_COMPILE_FLAG([-std=c99],

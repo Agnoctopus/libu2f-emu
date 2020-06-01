@@ -42,3 +42,4 @@ coverage
 doc
 *.gcda
 *.gcno
+.u2f.tmp

@@ -132,7 +132,8 @@ static struct message *cmd_ping_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void) request;
+    (void)state;
+    (void)request;
     return NULL;
 }
 
@@ -174,7 +175,8 @@ static struct message *cmd_lock_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void) request;
+    (void)state;
+    (void)request;
     return NULL;
 }
 
@@ -189,7 +191,8 @@ static struct message *cmd_wink_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void) request;
+    (void)state;
+    (void)request;
     return NULL;
 }
 
@@ -204,6 +207,7 @@ static struct message *cmd_init_handler(
         struct usb_state *state,
         const struct message *request)
 {
+    (void)state;
     /* Check message size*/
     if (request->bcnt != U2FHID_INIT_BCNT)
         return NULL;
@@ -243,7 +247,8 @@ static struct message *cmd_sync_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void) request;
+    (void)state;
+    (void)request;
     return NULL;
 }
 
@@ -258,7 +263,8 @@ static struct message *cmd_error_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void) request;
+    (void)state;
+    (void)request;
     return NULL;
 }
 

@@ -170,6 +170,7 @@ static uint8_t *authenticate_get_key_handle_cipher(
         const struct authentification_params *params,
         uint8_t *size)
 {
+    (void)apdu_size;
     /* Offset */
     size_t offset = 7
         + U2F_APP_PARAM_SIZE
@@ -245,6 +246,7 @@ static EC_KEY *authenticate_get_pubkey_from_key_handle(
 static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)
 {
+    (void)vdev;
     /* Parmas */
     struct authentification_params params;
     memcpy(&params, apdu + 7, sizeof(params));
@@ -355,6 +357,9 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
 static struct payload *raw_authenticate_no_enforce(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)
 {
+    (void)vdev;
+    (void)apdu;
+    (void)size;
     return NULL;
 }
 

@@ -5,3 +5,7 @@ noinst_PROGRAMS = u2f-emu-nfc
 
 u2f_emu_nfc_SOURCES = main.c
 u2f_emu_nfc_LDADD = $(top_srcdir)/src/libu2f-emu.la
+
+clean-local:
+	rm -f *.gcno
+	rm -f *.gcda

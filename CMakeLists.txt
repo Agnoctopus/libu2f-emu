@@ -25,8 +25,8 @@ endif()
 
 # Doc
 if(DOXYGEN_FOUND)
-    set (VERSION ${PROJECT_VERSION})
-    set (top_srcdir ${CMAKE_SOURCE_DIR})
+    set(VERSION ${PROJECT_VERSION})
+    set(top_srcdir ${CMAKE_SOURCE_DIR})
 
     configure_file(
         ${CMAKE_SOURCE_DIR}/Doxyfile.in
@@ -39,6 +39,23 @@ else()
     message("Doxygen not found: continuing without Doxygen support")
 endif()
 
+# Coverage
+add_custom_target(coverage
+        DEPENDS check
+        COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/coverage
+        COMMAND gcovr -r ${CMAKE_SOURCE_DIR}/src --object-directory ${CMAKE_BINARY_DIR} --html --html-details --html-title 'Libu2f-emu coverage' -o ${CMAKE_SOURCE_DIR}/coverage/index.html -j2
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# General compile options
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(EXTRA_FLAGS -g3 -O0)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+    set(EXTRA_FLAGS -g3 -O0 -fprofile-arcs -ftest-coverage -lgcov)
+    set(EXTRA_LIBS -lgcov)
+else()
+    set(EXTRA_FLAGS INTERFACE -g0 -O2)
+endif()
+
 # Add sources subdirectory
 add_subdirectory(src)
 
@@ -48,4 +65,3 @@ add_subdirectory(examples)
 # Tests
 enable_testing()
 add_subdirectory(tests)
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
