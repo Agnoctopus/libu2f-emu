@@ -5,7 +5,6 @@
 *.log
 *.trs
 *~
-doc
 build-aux
 
 # Cmake
@@ -37,4 +36,9 @@ u2f-emu-usb
 u2f-emu-nfc
 u2f-emu-bluetooth
 Doxyfile
-sanity-check
+tests/sanity-check
+tests/basic
+coverage
+doc
+*.gcda
+*.gcno
