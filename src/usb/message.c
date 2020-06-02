@@ -109,10 +109,13 @@ bool message_add_part(struct message *message,
     if (cont_packet->cid != message->cid)
         return false;
 
+    /* No cont packets needed */
+    if (message->bcnt <= PACKET_INIT_DATA_SIZE)
+        return false;
+
     /* Get current seq */
     uint8_t seq = 0;
-    if (message->bcnt > PACKET_INIT_DATA_SIZE)
-        seq = (message->payload->size - PACKET_INIT_DATA_SIZE)
+    seq = (message->payload->size - PACKET_INIT_DATA_SIZE)
             / PACKET_CONT_DATA_SIZE;
 
     /* Check seq */

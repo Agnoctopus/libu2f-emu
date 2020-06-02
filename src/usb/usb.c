@@ -126,6 +126,7 @@ int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
     state->in_transaction = false;
     state->cid_seed = time(NULL);
     state->vdev = vdev;
+    state->response = NULL;
 
     /* Referance */
     *(struct usb_state **)state_ref = state;
@@ -141,6 +142,18 @@ void u2f_emu_vdev_usb_state_free(void *state)
     /* NULL case */
     if (usb_state == NULL)
         return;
+
+    /* Transaction */
+    if (usb_state->in_transaction)
+    {
+        message_free(usb_state->transaction.request);
+        if (usb_state->transaction.response != usb_state->response)
+            message_free(usb_state->transaction.response);
+    }
+
+    /* Waiting response */
+    if (usb_state->response != NULL)
+        message_free(usb_state->response);
 
     /* Release */
     free(usb_state);

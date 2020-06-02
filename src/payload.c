@@ -64,6 +64,10 @@ bool payload_add_data(struct payload *payload,
     /* Check size */
     uint16_t size_new = payload->size + size;
 
+    /* Overflow check */
+    if (size >= UINT16_MAX || size_new < payload->size)
+        return false;
+
     /* Check capacity */
     if (size_new > payload->capacity)
     {

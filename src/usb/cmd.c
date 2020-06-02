@@ -154,6 +154,10 @@ static struct message *cmd_msg_handler(
             request->payload->data,
             request->payload->size);
 
+    /* Check payload */
+    if (payload == NULL)
+        return cmd_generate_error(request->cid, CMD_ERROR);
+
     /* Encapsulate in a message */
     struct message *response = message_new_from_data(request->cid,
             request->cmd, payload->data, payload->size);
