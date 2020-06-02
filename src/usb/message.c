@@ -203,6 +203,10 @@ bool message_next_packet(struct message *message, void **packet_ref)
 
 void message_free(struct message *message)
 {
+    /* NULL case */
+    if (message == NULL)
+        return;
+
     payload_free(message->payload);
     free(message);
 }

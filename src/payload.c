@@ -76,6 +76,7 @@ bool payload_add_data(struct payload *payload,
         /* Update */
         memcpy(data_new, data, payload->size);
         payload->capacity = cap_new;
+        payload->data = data_new;
     }
 
     /* Add data */
@@ -89,6 +90,10 @@ bool payload_add_data(struct payload *payload,
 
 void payload_free(struct payload *payload)
 {
+    /* NULL case */
+    if (payload == NULL)
+        return;
+
     free(payload->data);
     free(payload);
 }
