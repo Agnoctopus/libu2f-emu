@@ -1,3 +1,7 @@
+SUBDIRS = usb
+
+MY_WARN_CFLAGS = -Wall -Wextra -Werror
+
 if HAVE_PTHREAD
     GTEST_CPPFLAGS += -DGTEST_HAS_PTHREAD=1
     GTEST_CFLAGS += $(PTHREAD_CFLAGS)
@@ -6,8 +10,8 @@ else
     GTEST_CPPFLAGS += "-DGTEST_HAS_PTHREAD=0"
 endif
 
-AM_CXXFLAGS = $(WARN_CXXFLAGS) -I${top_srcdir}/src  $(GTEST_CFLAGS)
-AM_CPPFLAGS = $(WARN_CXXFLAGS) -I${top_srcdir}/src $(GTEST_CPPFLAGS)
+AM_CXXFLAGS = $(MY_WARN_CFLAGS) -I${top_srcdir}/src  $(GTEST_CFLAGS)
+AM_CPPFLAGS = $(MY_WARN_CFLAGS) -I${top_srcdir}/src $(GTEST_CPPFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS) $(GTEST_LIBS)
 
 clean-local:

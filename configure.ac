@@ -111,6 +111,7 @@ AC_CONFIG_FILES([
         src/Makefile
         src/u2f-emu.pc
         tests/Makefile
+        tests/usb/Makefile
         examples/Makefile
         examples/usb/Makefile
         examples/nfc/Makefile
