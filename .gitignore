@@ -38,8 +38,13 @@ u2f-emu-bluetooth
 Doxyfile
 tests/sanity-check
 tests/basic
+tests/payload
+tests/usb/message
+tests/usb/packet
+tests/usb/usb
 coverage
 doc
 *.gcda
 *.gcno
+*.gcov
 .u2f.tmp
