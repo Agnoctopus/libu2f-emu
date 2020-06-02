@@ -30,10 +30,13 @@ check: pre-check
 
 # TESTS -- Programs run automatically by "make check"
 # check_PROGRAMS -- Programs built by "make check" but not necessarily run
-TESTS = sanity-check basic
+TESTS = sanity-check basic payload
 check_PROGRAMS = $(TESTS)
 
 sanity_check_SOURCES = sanity.cc
 
 basic_SOURCES = basic.cc
 basic_LDADD = $(top_srcdir)/src/libu2f-emu.la
+
+payload_SOURCES = payload.cc
+payload_LDADD = $(top_srcdir)/src/libu2f-emu.la

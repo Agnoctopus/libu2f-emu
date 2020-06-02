@@ -7,6 +7,7 @@ extern "C" {
     #include "payload.h"
 }
 
+
 TEST(PayloadNew, Payload)
 {
     /* Given */
