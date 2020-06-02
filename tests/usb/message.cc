@@ -162,3 +162,125 @@ TEST(MessageBlankOverflow, Message)
     /* After */
     message_free(message);
 }
+
+TEST(MessagePart, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    struct packet_init *packet_init =
+            packet_init_new(BROADCAST_CID, CMD_INIT,
+                    PACKET_INIT_DATA_SIZE + 42);
+    struct packet_cont *packet_cont =
+            packet_cont_new(BROADCAST_CID, 0);
+    memset(packet_init->data, 4, PACKET_INIT_DATA_SIZE);
+    memset(packet_cont->data, 8, 42);
+    message = message_new(packet_init);
+
+    /* When */
+    bool ret = message_add_part(message, packet_cont);
+
+    /* Then */
+    EXPECT_TRUE(ret);
+    for (int i = 0; i < PACKET_INIT_DATA_SIZE; ++i)
+        EXPECT_EQ(message->payload->data[i], 4);
+    for (int i = PACKET_INIT_DATA_SIZE;
+            i < PACKET_INIT_DATA_SIZE + 42; ++i)
+        EXPECT_EQ(message->payload->data[i], 8);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    message_free(message);
+}
+
+
+TEST(MessagePartBadCID, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    struct packet_init *packet_init =
+            packet_init_new(BROADCAST_CID, CMD_INIT, 84);
+    struct packet_cont *packet_cont =
+            packet_cont_new(4, 0);
+    message = message_new(packet_init);
+
+    /* When */
+    bool ret = message_add_part(message, packet_cont);
+
+    /* Then */
+    EXPECT_FALSE(ret);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    message_free(message);
+}
+
+TEST(MessagePartOneInit, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    struct packet_init *packet_init =
+            packet_init_new(BROADCAST_CID, CMD_INIT, 42);
+    struct packet_cont *packet_cont =
+            packet_cont_new(BROADCAST_CID, 0);
+    message = message_new(packet_init);
+
+    /* When */
+    bool ret = message_add_part(message, packet_cont);
+
+    /* Then */
+    EXPECT_FALSE(ret);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    message_free(message);
+}
+
+TEST(MessagePartBadSeq, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    struct packet_init *packet_init =
+            packet_init_new(BROADCAST_CID, CMD_INIT, 84);
+    struct packet_cont *packet_cont =
+            packet_cont_new(BROADCAST_CID, 1);
+    message = message_new(packet_init);
+
+    /* When */
+    bool ret = message_add_part(message, packet_cont);
+
+    /* Then */
+    EXPECT_FALSE(ret);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    message_free(message);
+}
+
+TEST(MessageOverflow, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    struct packet_init *packet_init =
+            packet_init_new(BROADCAST_CID, CMD_INIT, 84);
+    struct packet_cont *packet_cont =
+            packet_cont_new(BROADCAST_CID, 0);
+    struct packet_cont *packet_cont_next =
+            packet_cont_new(BROADCAST_CID, 0);
+    message = message_new(packet_init);
+    message_add_part(message, packet_cont);
+
+    /* When */
+    bool ret = message_add_part(message, packet_cont_next);
+
+    /* Then */
+    EXPECT_FALSE(ret);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    message_free(message);
+}
