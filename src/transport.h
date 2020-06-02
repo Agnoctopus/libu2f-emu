@@ -14,6 +14,12 @@
 typedef int (*state_init_t)(u2f_emu_vdev *vdev, void **state);
 
 /**
+** \brief Transport state free handler for U2F virtual emulated
+**        device transport.
+*/
+typedef void (*state_free_t)(void *state);
+
+/**
 ** \brief Input handler for U2F virtual emulated device input
 **        processing.
 */
@@ -37,7 +43,8 @@ typedef size_t (*get_response)(void *state, uint8_t **data);
 typedef struct transport
 {
     u2f_emu_transport type; /**< Type */
-    state_init_t state_init; /**< State init function */
+    state_init_t state_init; /**< State init */
+    state_free_t state_free; /**< State free */
     input_handler_t input_handler; /**< Input handler */
     has_response has_response; /**< Response precense checker */
     get_response get_response; /**< Response getter */

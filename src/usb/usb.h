@@ -43,6 +43,14 @@ struct usb_state
 int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
         void **state_ref);
 
+
+/**
+** \brief Free the USB state.
+**
+** \param state The USB transport state.
+*/
+void u2f_emu_vdev_usb_state_free(void *state);
+
 /**
 ** \brief Process incoming data from an USB HID packet.
 **

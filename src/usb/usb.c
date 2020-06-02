@@ -133,6 +133,19 @@ int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
     return 0;
 }
 
+void u2f_emu_vdev_usb_state_free(void *state)
+{
+    /* USB state */
+    struct usb_state *usb_state = state;
+
+    /* NULL case */
+    if (usb_state == NULL)
+        return;
+
+    /* Release */
+    free(usb_state);
+}
+
 bool u2f_emu_vdev_usb_has_response(void *state)
 {
     /* USB state */
@@ -178,6 +191,7 @@ transport_t usb_transport =
 {
     .type = U2F_EMU_USB,
     .state_init = u2f_emu_vdev_usb_state_init,
+    .state_free = u2f_emu_vdev_usb_state_free,
     .input_handler = u2f_emu_vdev_usb_process,
     .has_response = u2f_emu_vdev_usb_has_response,
     .get_response = u2f_emu_vdev_usb_get_response
