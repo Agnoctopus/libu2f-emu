@@ -199,7 +199,7 @@ TEST(VersionIn, USB)
     EXPECT_NE(response, nullptr);
     EXPECT_EQ(response->payload->size, 8);
     EXPECT_FALSE(u2f_emu_vdev_has_response(vdev));
-    for (int i = 0; i < strlen(VERSION_STR); ++i)
+    for (int i = 0; i < (int)strlen(VERSION_STR); ++i)
         EXPECT_EQ(response->payload->data[i], VERSION_STR[i]);
     EXPECT_EQ(response->payload->data[6], SW_NO_ERROR >> 8);
     EXPECT_EQ(response->payload->data[7], SW_NO_ERROR & 0xFF);

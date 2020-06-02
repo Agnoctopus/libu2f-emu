@@ -30,12 +30,12 @@ typedef void (*input_handler_t)(void *state,
 ** \brief Response precense checker for U2F virtual emulated device
 **        transport.
 */
-typedef bool (*has_response)(void *state);
+typedef bool (*has_response_t)(void *state);
 
 /**
 ** \brief Response getter for U2F virtual emulated device transport.
 */
-typedef size_t (*get_response)(void *state, uint8_t **data);
+typedef size_t (*get_response_t)(void *state, uint8_t **data);
 
 /**
 ** \brief Transport representation.
@@ -46,8 +46,8 @@ typedef struct transport
     state_init_t state_init; /**< State init */
     state_free_t state_free; /**< State free */
     input_handler_t input_handler; /**< Input handler */
-    has_response has_response; /**< Response precense checker */
-    get_response get_response; /**< Response getter */
+    has_response_t has_response; /**< Response precense checker */
+    get_response_t get_response; /**< Response getter */
 } transport_t;
 
 

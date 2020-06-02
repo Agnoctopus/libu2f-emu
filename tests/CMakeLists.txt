@@ -23,11 +23,20 @@ if(GTest_FOUND)
     set_target_properties(basic PROPERTIES FOLDER tests)
     add_test(basic basic)
 
+    add_executable(payload EXCLUDE_FROM_ALL)
+    target_sources(payload PRIVATE payload.cc)
+    target_include_directories(payload PRIVATE ${CMAKE_SOURCE_DIR}/src)
+    target_link_libraries(payload PRIVATE gtest gtest_main u2f-emu ${EXTRA_LIBS})
+    target_compile_options(payload PRIVATE -Wall -Werror -Wextra -pedantic ${EXTRA_FLAGS})
+    set_target_properties(payload PROPERTIES FOLDER tests)
+    add_test(payload payload)
+
     add_custom_command(OUTPUT SETUP_DIR
         COMMAND rm -rf .u2f.tmp
         COMMAND ${CMAKE_SOURCE_DIR}/setup.sh .u2f.tmp)
     add_custom_target(setup_dir DEPENDS SETUP_DIR)
 
-    add_dependencies(check setup_dir sanity-check basic)
+    add_dependencies(check setup_dir sanity-check basic payload)
 
+    add_subdirectory(usb)
 endif()
