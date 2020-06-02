@@ -282,5 +282,105 @@ TEST(MessageOverflow, Message)
     /* After */
     free(packet_init);
     free(packet_cont);
+    free(packet_cont_next);
+    message_free(message);
+}
+
+TEST(MessageNextOnePacket, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    char data[42];
+    memset(data, 4, 42);
+    message = message_new_from_data(BROADCAST_CID, CMD_INIT,
+            (uint8_t *)data, 42);
+    struct packet_init *packet_init = NULL;
+
+    /* When */
+    bool ret = message_next_packet(message, (void **)&packet_init);
+
+    /* Then */
+    EXPECT_FALSE(ret);
+    EXPECT_EQ(packet_init->cid, BROADCAST_CID);
+    EXPECT_EQ(packet_init->cmd, CMD_INIT);
+    EXPECT_EQ(packet_init_get_bcnt(packet_init), 42);
+    for (int i = 0; i < 42; ++i)
+        EXPECT_EQ(packet_init->data[i], 4);
+
+    /* After */
+    free(packet_init);
+    message_free(message);
+}
+
+TEST(MessageNextTwoPackets, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    char data[84];
+    memset(data, 4, 84);
+    message = message_new_from_data(BROADCAST_CID, CMD_INIT,
+            (uint8_t *)data, 84);
+    struct packet_init *packet_init = NULL;
+    struct packet_cont *packet_cont = NULL;
+
+    /* When */
+    bool ret1 = message_next_packet(message, (void **)&packet_init);
+    bool ret2 = message_next_packet(message, (void **)&packet_cont);
+
+    /* Then */
+    EXPECT_TRUE(ret1);
+    EXPECT_FALSE(ret2);
+    EXPECT_EQ(packet_init->cid, BROADCAST_CID);
+    EXPECT_EQ(packet_init->cmd, CMD_INIT);
+    EXPECT_EQ(packet_init_get_bcnt(packet_init), 84);
+    for (int i = 0; i < PACKET_INIT_DATA_SIZE; ++i)
+        EXPECT_EQ(packet_init->data[i], 4);
+    EXPECT_EQ(packet_cont->cid, BROADCAST_CID);
+    EXPECT_EQ(packet_cont->seq, 0);
+    for (int i = 0; i < 84 - PACKET_INIT_DATA_SIZE; ++i)
+        EXPECT_EQ(packet_cont->data[i], 4);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    message_free(message);
+}
+
+TEST(MessageNextThreePackets, Message)
+{
+    /* Given */
+    struct message *message = NULL;
+    char data[128];
+    memset(data, 4, 128);
+    message = message_new_from_data(BROADCAST_CID, CMD_INIT,
+            (uint8_t *)data, 128);
+    struct packet_init *packet_init = NULL;
+    struct packet_cont *packet_cont = NULL;
+    struct packet_cont *packet_cont_next = NULL;
+
+    /* When */
+    bool ret1 = message_next_packet(message, (void **)&packet_init);
+    bool ret2 = message_next_packet(message, (void **)&packet_cont);
+    bool ret3 = message_next_packet(message,
+            (void **)&packet_cont_next);
+
+    /* Then */
+    EXPECT_TRUE(ret1);
+    EXPECT_TRUE(ret2);
+    EXPECT_FALSE(ret3);
+    EXPECT_EQ(packet_cont->cid, BROADCAST_CID);
+    EXPECT_EQ(packet_cont->seq, 0);
+    for (int i = 0; i < PACKET_INIT_DATA_SIZE; ++i)
+        EXPECT_EQ(packet_cont->data[i], 4);
+    EXPECT_EQ(packet_cont_next->cid, BROADCAST_CID);
+    EXPECT_EQ(packet_cont_next->seq, 1);
+    for (int i = 0; i < 128 - PACKET_INIT_DATA_SIZE
+            - PACKET_CONT_DATA_SIZE; ++i)
+        EXPECT_EQ(packet_cont->data[i], 4);
+
+    /* After */
+    free(packet_init);
+    free(packet_cont);
+    free(packet_cont_next);
     message_free(message);
 }
