@@ -107,6 +107,9 @@ static void u2f_dev_uhid_event_handler(
 
         /* Send response part */
         uhid_dev_send_input(usb_vdev->fd, data, data_len);
+
+        /* Free part */
+        free(data);
     }
 }
 
