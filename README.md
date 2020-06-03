@@ -27,6 +27,10 @@ Each virtual device, for its configuration requires:
 
 All the files are grouped inside a setup_dir that can be created through the `setup.sh` script.
 
+```shell
+$ ./setup.sh <setup_dir>
+```
+
 # Examples
 
 For each transport, a code example is available and can be built:
@@ -37,6 +41,10 @@ make examples
 ### USB:
 
 Software that emulates U2F through a virtual USB device using UHID system API on Linux and the `libu2f-emu`.
+
+```shell
+$ ./examples/usb/u2f-emu-usb <setup_dir>
+```
 
 # Building
 
