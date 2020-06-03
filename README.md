@@ -20,7 +20,7 @@ and receiving transport specific data through the API.
 # Device configuration
 
 Each virtual device, for its configuration requires:
-- an EC X509 certificate
+- an EC x509 certificate
 - its EC private key
 - 48 bits of entropy
 - a global counter
