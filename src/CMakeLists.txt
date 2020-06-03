@@ -8,6 +8,7 @@ endif()
 
 # Sources
 set (SRC
+    counter.c
     crypto.c
     error.c
     payload.c
@@ -18,8 +19,8 @@ set (SRC
     usb/packet.c
     usb/transaction.c
     usb/usb.c
-    raw/raw.c
     raw/authenticate.c
+    raw/raw.c
     raw/register.c
     )
 

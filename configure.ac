@@ -1,6 +1,6 @@
 AC_PREREQ([2.69])
 AC_INIT([libu2f-emu],
-        [1.0.0],
+        [0.0.0],
         [cesar.belley@lse.epita.fr],
         [libu2f-emu],
         [https://github.com/MattGorko/libu2f-emu])
@@ -11,8 +11,8 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # Subst
-AC_SUBST([SO_VERSION], [1:0:0])
-AC_SUBST([version], [1.0.0])
+AC_SUBST([SO_VERSION], [0:0:0])
+AC_SUBST([version], [0.0.0])
 
 # Automake
 AM_INIT_AUTOMAKE([
