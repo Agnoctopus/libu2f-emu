@@ -1,6 +1,7 @@
 #ifndef U2F_VDEV_H
 #define U2F_VDEV_H
 
+#include "counter.h"
 #include "crypto.h"
 #include "transport.h"
 #include "u2f-emu-types.h"
@@ -18,6 +19,9 @@ struct u2f_emu_vdev
 
     /* Crypto core */
     struct crypto_core crypto_core; /**< Crypto core */
+
+    /* Global attributes */
+    struct counter counter;
 };
 
 

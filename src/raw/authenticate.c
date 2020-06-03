@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "counter.h"
 #include "crypto.h"
 #include "raw.h"
 #include "u2f-vdev.h"
@@ -14,6 +15,7 @@
 /* Params len */
 #define U2F_CHA_PARAM_SIZE 32
 #define U2F_APP_PARAM_SIZE 32
+
 
 struct authentification_params
 {
@@ -246,7 +248,6 @@ static EC_KEY *authenticate_get_pubkey_from_key_handle(
 static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)
 {
-    (void)vdev;
     /* Parmas */
     struct authentification_params params;
     memcpy(&params, apdu + 7, sizeof(params));
@@ -268,6 +269,11 @@ static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
         key_handle_cipher_size,
         &key_handle_size
     );
+    if (key_handle_size == 0)
+    {
+        free(key_handle_cipher);
+        return NULL;
+    }
 
     /* Privkey */
     size_t privkey_size = key_handle_size - U2F_APP_PARAM_SIZE;
@@ -326,14 +332,14 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
     authenticate_response_user_pre(payload, true);
 
     /* Counter */
-    authenticate_response_counter(payload, 1);
+    authenticate_response_counter(payload, vdev->counter.value);
 
     /* Signature */
     authenticate_response_signature(payload,
         key,
         &params,
         1,
-        1);
+        vdev->counter.value);
 
     /* SW */
     authenticate_response_sw(payload, SW_NO_ERROR);
@@ -342,6 +348,9 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
     free(key_handle_cipher);
     free(key_handle);
     EC_KEY_free(key);
+
+    /* Increment counter */
+    counter_increment(&vdev->counter);
 
     return payload;
 }

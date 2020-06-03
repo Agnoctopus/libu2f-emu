@@ -97,9 +97,17 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     vdev->transport = transport;
     vdev->apdu = U2F_EMU_EXTENDED;
 
+    /* Counter */
+    if (!counter_setup_from_dir(setup_dir, &vdev->counter))
+    {
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
+    }
+
     /* Crypto core */
     if (!crypto_setup_from_dir(setup_dir, &vdev->crypto_core))
     {
+        counter_release(&vdev->counter);
         free(vdev);
         return U2F_EMU_MEMORY_ERROR;
     }
@@ -110,6 +118,7 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     if (rc != U2F_EMU_OK)
     {
         /* Release */
+        counter_release(&vdev->counter);
         crypto_release(&vdev->crypto_core);
         free(vdev);
         return rc;

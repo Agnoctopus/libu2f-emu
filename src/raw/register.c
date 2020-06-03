@@ -267,7 +267,6 @@ struct payload *raw_register(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size)
 
 {
-    (void)size;
     /* Params */
     struct registration_params params;
     memcpy(&params, apdu + 7, sizeof(params));
