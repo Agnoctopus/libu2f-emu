@@ -30,3 +30,6 @@ openssl req -new -x509 -key "$target_dir"/private-key.pem -out "$target_dir"/cer
 
 # AES entropy bits
 head -c 48 /dev/random > "$target_dir"/entropy
+
+# Counter
+echo -e -n "\x00" > "$target_dir"/counter
