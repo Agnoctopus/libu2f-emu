@@ -210,6 +210,38 @@ TEST(VersionIn, USB)
     u2f_emu_vdev_free(vdev);
 }
 
+TEST(VersionWrongCID, USB)
+{
+    /* Given */
+    u2f_emu_vdev *vdev = NULL;
+    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+
+    struct frame_header header;
+    memset(&header, 0, sizeof(header));
+    header.ins = U2F_VERSION;
+
+    struct message *request_1 = message_new_from_data(42, CMD_MSG,
+            (uint8_t *)&header, sizeof(header));
+    struct message *request_2 = message_new_from_data(44, CMD_MSG,
+            (uint8_t *)&header, sizeof(header));
+
+    usb_send_request(vdev, request_1);
+    usb_send_request(vdev, request_2);
+
+    /* When */
+    struct message *response = usb_recv_response(vdev);
+
+    /* Then */
+    EXPECT_NE(response, nullptr);
+    EXPECT_EQ(response->cmd, CMD_ERROR);
+
+    /* After */
+    message_free(request_1);
+    message_free(request_2);
+    message_free(response);
+    u2f_emu_vdev_free(vdev);
+}
+
 TEST(RegisterOut, USB)
 {
     /* Given */
@@ -376,6 +408,7 @@ TEST(AuthIn, USB)
     message_free(reg_request);
     message_free(auth_request);
     message_free(reg_response);
+    message_free(auth_response);
     u2f_emu_vdev_free(vdev);
 }
 
@@ -430,5 +463,6 @@ TEST(AuthInCheck, USB)
     message_free(reg_request);
     message_free(auth_request);
     message_free(reg_response);
+    message_free(auth_response);
     u2f_emu_vdev_free(vdev);
 }
