@@ -45,6 +45,7 @@ Software that emulates U2F through a virtual USB device using UHID system API on
 ```shell
 $ ./examples/usb/u2f-emu-usb <setup_dir>
 ```
+> You can easily test the virtual device my registering it on websites or by playing with it on https://webauthn.io/.
 
 # Building
 
