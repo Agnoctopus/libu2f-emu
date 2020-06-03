@@ -35,7 +35,7 @@ $ ./setup.sh <setup_dir>
 
 For each transport, a code example is available and can be built:
 ```shell
-make examples
+$ make examples
 ```
 
 ### USB:
