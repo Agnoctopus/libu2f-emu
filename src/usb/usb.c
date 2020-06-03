@@ -92,6 +92,18 @@ void u2f_emu_vdev_usb_process(void *state,
     bool is_init_packet = packet_is_init(packet);
     struct message *response = NULL;
 
+    /* Check timeout */
+    if (usb_state->in_transaction
+        && usb_state->transaction.request->cid != cid
+        && transaction_timeout(&usb_state->transaction))
+    {
+        /* Release */
+        message_free(usb_state->transaction.request);
+        if (usb_state->response != usb_state->transaction.response)
+            message_free(usb_state->transaction.response);
+        usb_state->in_transaction = false;
+    }
+
     /* Siwtch packet type */
     if (is_init_packet)
     {
