@@ -6,6 +6,7 @@ Libu2f-emu, provides a C Library for the U2F device emulations.
 # API
 
 The API is described in `src/u2f-emu.h` and `src/u2f-emu-type.h`.
+
 It gives the possibility to create virtual emulated U2F devices with transport specific considerations.
 Four transports are available:
 - USB
@@ -23,6 +24,7 @@ Each virtual device, for its configuration requires:
 - its EC private key
 - 48 bits of entropy
 - a global counter
+
 All the files are grouped inside a setup_dir that can be created through the `setup.sh` script.
 
 # Examples
