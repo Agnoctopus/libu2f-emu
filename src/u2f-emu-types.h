@@ -12,7 +12,7 @@ typedef enum
 
 typedef enum
 {
-  U2F_EMU_AGNOSTIC = 0,
+  U2F_EMU_APDU = 0,
   U2F_EMU_USB,
   U2F_EMU_BLUETOOTH,
   U2F_EMU_NFC
@@ -20,7 +20,7 @@ typedef enum
 
 typedef enum
 {
-    U2F_EMU_EXTENDED,
+    U2F_EMU_EXTENDED = 0,
     U2F_EMU_SHORT,
 } u2f_emu_apdu;
 

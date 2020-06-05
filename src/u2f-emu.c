@@ -33,7 +33,7 @@ u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
 {
     /* Check permissions */
     if (vdev->transport->type != U2F_EMU_NFC
-        && vdev->transport->type != U2F_EMU_AGNOSTIC)
+        && vdev->transport->type != U2F_EMU_APDU)
         return U2F_EMU_PERMISSION_ERROR;
 
     /* Set apdu */
