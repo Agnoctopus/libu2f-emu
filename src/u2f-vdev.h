@@ -20,6 +20,9 @@ struct u2f_emu_vdev
     /* Core */
     struct crypto_core crypto_core; /**< Crypto core */
     struct u2f_emu_vdev_counter *counter; /**< Global counter */
+
+    /* Other attributes */
+    bool is_user_counter; /**< User counter */
 };
 
 

@@ -42,18 +42,6 @@ u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
     return U2F_EMU_OK;
 }
 
-void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
-{
-    /* NULL case */
-    if (vdev == NULL)
-        return;
-
-    /* Release */
-    vdev->transport->state_free(vdev->transport_state);
-    crypto_release(&vdev->crypto_core);
-    free(vdev);
-}
-
 /**
 ** \brief Init the transport state of an U2F virtual device.
 **
@@ -76,8 +64,18 @@ static u2f_emu_rc u2f_emu_vdev_transport_state_init(
     return U2F_EMU_OK;
 }
 
-u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type, const char *setup_dir)
+/**
+** \brief Instantiate a new U2F virtual emulated device base,
+**        with the transport configuration.
+**
+** \param vdev_ref The virtual device reference.
+** \param transport_type The transport of the virtual device.
+** \return Success: U2F_EMU_OK.
+**         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.
+**                  - not supported: U2F_EMU_SUPPORTED_ERROR.
+*/
+static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
+        u2f_emu_transport transport_type)
 {
     /* U2F virtual emulated device being instantiated */
     u2f_emu_vdev *vdev;
@@ -93,24 +91,9 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     if (vdev == NULL)
         return U2F_EMU_MEMORY_ERROR;
 
-    /* Initialize */
+    /* Initialize transport */
     vdev->transport = transport;
     vdev->apdu = U2F_EMU_EXTENDED;
-
-    /* Counter */
-    if (!counter_new_from_dir(setup_dir, &vdev->counter))
-    {
-        free(vdev);
-        return U2F_EMU_MEMORY_ERROR;
-    }
-
-    /* Crypto core */
-    if (!crypto_setup_from_dir(setup_dir, &vdev->crypto_core))
-    {
-        counter_release(vdev->counter);
-        free(vdev);
-        return U2F_EMU_MEMORY_ERROR;
-    }
 
     /* Transport state */
     u2f_emu_rc rc =
@@ -118,8 +101,6 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     if (rc != U2F_EMU_OK)
     {
         /* Release */
-        counter_release(vdev->counter);
-        crypto_release(&vdev->crypto_core);
         free(vdev);
         return rc;
     }
@@ -128,4 +109,82 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     *vdev_ref = vdev;
 
     return U2F_EMU_OK;
+}
+
+u2f_emu_rc u2f_emu_vdev_new_from_dir(u2f_emu_vdev **vdev_ref,
+        u2f_emu_transport transport_type, const char *pathname)
+{
+    /* Base instantation */
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(vdev_ref, transport_type);
+    if (rc != U2F_EMU_OK)
+        return rc;
+
+    /* Get virtual device */
+    u2f_emu_vdev *vdev = *vdev_ref;
+
+    /* Counter */
+    if (!counter_new_from_dir(pathname, &vdev->counter))
+    {
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
+    }
+    vdev->is_user_counter = false;
+
+
+    /* Crypto core */
+    if (!crypto_setup_from_dir(pathname, &vdev->crypto_core))
+    {
+        counter_release(vdev->counter);
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
+    }
+
+    /* Reference */
+    *vdev_ref = vdev;
+
+    return U2F_EMU_OK;
+}
+
+u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
+        u2f_emu_transport transport_type,
+        const struct u2f_emu_vdev_setup *info)
+{
+    /* Base instantation */
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(vdev_ref, transport_type);
+    if (rc != U2F_EMU_OK)
+        return rc;
+
+    /* Get virtual device */
+    u2f_emu_vdev *vdev = *vdev_ref;
+
+    /* Counter */
+    vdev->counter = info->counter;
+    vdev->is_user_counter = true;
+
+    /* Crypto core */
+    if (!crypto_setup_from_dir(NULL, &vdev->crypto_core))
+    {
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
+    }
+
+    /* Reference */
+    *vdev_ref = vdev;
+
+    return U2F_EMU_OK;
+}
+
+void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
+{
+    /* NULL case */
+    if (vdev == NULL)
+        return;
+
+    /* Release */
+    vdev->transport->state_free(vdev->transport_state);
+    crypto_release(&vdev->crypto_core);
+    if (vdev->is_user_counter)
+        return;
+    counter_release(vdev->counter);
+    free(vdev);
 }
