@@ -28,6 +28,12 @@ size_t u2f_emu_vdev_get_response(u2f_emu_vdev *vdev, uint8_t **data)
             data);
 }
 
+void u2f_emu_vdev_free_response(uint8_t *data)
+{
+    free(data);
+}
+
+
 u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
     u2f_emu_apdu apdu)
 {

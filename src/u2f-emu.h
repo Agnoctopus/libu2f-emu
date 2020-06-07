@@ -95,4 +95,11 @@ bool u2f_emu_vdev_has_response(u2f_emu_vdev *vdev);
 */
 size_t u2f_emu_vdev_get_response(u2f_emu_vdev *vdev, uint8_t **data);
 
+/**
+** \brief Free a response from an U2F virtual emulated device.
+**
+** \param data The data buffer of the response.
+*/
+void u2f_emu_vdev_free_response(uint8_t *data);
+
 #endif
