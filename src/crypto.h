@@ -147,12 +147,26 @@ EC_KEY *crypto_ec_generate_key(void);
 /**
 ** \brief Setup a crypto core from a dir.
 **
-** \param pathname The pathname of the dir
+** \param pathname The pathname of the setup directory.
 ** \param crypto_core The crypto core to setup.
 ** \return Sucess: true.
 **         Failure: false.
 */
 bool crypto_setup_from_dir(const char *pathname,
+        struct crypto_core *crypto_core);
+
+/**
+** \brief Setup a crypto core.
+**
+** \param certificate PEM ec certificate.
+** \param private_key PEM ec Private key of the certificate.
+** \param entropy Random bits used in encryption.
+** \param crypto_core The crypto core to setup.
+** \return Sucess: true.
+**         Failure: false.
+*/
+bool crypto_setup(const uint8_t *certificate,
+        const uint8_t *private_key, const uint8_t entropy[48],
         struct crypto_core *crypto_core);
 
 /**

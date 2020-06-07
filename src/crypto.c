@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -10,6 +11,35 @@
 
 #include "crypto.h"
 
+
+/**
+** \brief Compute the pem length.
+**
+** \param pem The pem.
+** \return Success: pem length.
+**         Failure: 0.
+*/
+static size_t crypto_pem_length(const uint8_t *pem)
+{
+    size_t length = 0;
+    if (pem[length] != '-')
+        return 0;
+    ++length;
+    /* Skip - */
+    for (int i = 0; i < 3; ++i)
+    {
+        /* Skip - */
+        while (pem[length] == '-')
+            ++length;
+        /* Skip letters */
+        while (pem[length] != '-')
+            ++length;
+    }
+    /* Skip - */
+    while (pem[length] == '-')
+        ++length;
+    return length;
+}
 
 EC_KEY *crypto_ec_bytes_to_key(const unsigned char *buffer,
     long size)
@@ -337,6 +367,36 @@ static X509 *crypto_x509_from_file(int dirfd,
 }
 
 /**
+** \brief Get the x509 from pem.
+**
+** \param x509_pem The x509 PEM.
+** \return Success: The x509.
+**         Failure: NULL.
+*/
+static X509 *crypto_x509_from_pem(const uint8_t *x509_pem)
+{
+    /* Pem length */
+    size_t pem_length = crypto_pem_length(x509_pem);
+    if (pem_length == 0)
+        return NULL;
+
+    /* Bio needed */
+    BIO *x509_bio = BIO_new(BIO_s_mem());
+    if (x509_bio == NULL)
+        return NULL;
+    BIO_write(x509_bio, x509_pem, pem_length);
+
+    /* x509 */
+    X509 *x509 = X509_new();
+    PEM_read_bio_X509(x509_bio, &x509, NULL, NULL);
+
+    /* Free */
+    BIO_free_all(x509_bio);
+
+    return x509;
+}
+
+/**
 ** \brief Get the ec private key from path
 **
 ** \param dirfd The dirfd to get pathname file.
@@ -358,6 +418,37 @@ static EC_KEY *crypto_ec_privkey_from_path(int dirfd,
 
     /* Close */
     fclose(fp);
+
+    return privkey;
+}
+
+/**
+** \brief Get the ec private key from PEM.
+**
+** \param private_key_pem The ec private key PEM.
+** \return Success: The private key.
+**         Failure: NULL.
+*/
+static EC_KEY *crypto_ec_privkey_from_pem(
+        const uint8_t *private_key_pem)
+{
+    /* Pem length */
+    size_t pem_length = crypto_pem_length(private_key_pem);
+    if (pem_length == 0)
+        return NULL;
+
+    /* Bio needed */
+    BIO *privkey_bio = BIO_new(BIO_s_mem());
+    if (privkey_bio == NULL)
+        return NULL;
+    BIO_write(privkey_bio, private_key_pem, pem_length);
+
+    /* EC_Key */
+    EC_KEY *privkey = EC_KEY_new();
+    PEM_read_bio_ECPrivateKey(privkey_bio, &privkey, NULL, NULL);
+
+    /* Free */
+    BIO_free_all(privkey_bio);
 
     return privkey;
 }
@@ -410,6 +501,30 @@ EC_KEY *crypto_ec_pubkey_from_priv(EC_KEY *privkey)
     return pubkey;
 }
 
+bool crypto_setup(const uint8_t *certificate,
+        const uint8_t *private_key, const uint8_t entropy[48],
+        struct crypto_core *crypto_core)
+{
+    /* Entropy */
+    memcpy(crypto_core->entropy, entropy, 48);
+
+    /* Certificate */
+    crypto_core->cert = crypto_x509_from_pem(certificate);
+    if (crypto_core->cert == NULL)
+        return false;
+
+    /* Private key */
+    crypto_core->privkey = crypto_ec_privkey_from_pem(private_key);
+    if (crypto_core->privkey == NULL)
+        return false;
+
+    /* Pub key */
+    crypto_core->pubkey =
+            crypto_ec_pubkey_from_priv(crypto_core->privkey);
+    if (crypto_core->pubkey == NULL)
+        return false;
+    return true;
+}
 
 bool crypto_setup_from_dir(const char *pathname,
         struct crypto_core *crypto_core)
@@ -440,26 +555,22 @@ bool crypto_setup_from_dir(const char *pathname,
     /* Private key */
     crypto_core->privkey = crypto_ec_privkey_from_path(dirfd,
             CRYPTO_PRIVKEY_FILENAME);
+    close(dirfd);
     if (crypto_core->privkey == NULL)
-    {
-        close(dirfd);
         return false;
-    }
 
     /* Pub key */
     crypto_core->pubkey =
             crypto_ec_pubkey_from_priv(crypto_core->privkey);
     if (crypto_core->pubkey == NULL)
-    {
-        close(dirfd);
         return false;
-    }
 
     /* Close */
     close(dirfd);
 
     return true;
 }
+
 
 void crypto_release(struct crypto_core *crypto_core)
 {
