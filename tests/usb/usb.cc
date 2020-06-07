@@ -19,7 +19,7 @@ TEST(NoResponse, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     /* When */
     bool ret = u2f_emu_vdev_has_response(vdev);
@@ -100,7 +100,7 @@ TEST(InitOut, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     const char *nonce = "ABCDEFGF";
     struct message *request = message_new_from_data(BROADCAST_CID,
@@ -122,7 +122,7 @@ TEST(InitIn, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     const char *nonce = "ABCDEFGF";
     struct message *request = message_new_from_data(BROADCAST_CID,
@@ -156,7 +156,7 @@ TEST(VersionOut, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     struct frame_header header;
     memset(&header, 0, sizeof(header));
@@ -181,7 +181,7 @@ TEST(VersionIn, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     struct frame_header header;
     memset(&header, 0, sizeof(header));
@@ -214,7 +214,7 @@ TEST(VersionWrongCID, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     struct frame_header header;
     memset(&header, 0, sizeof(header));
@@ -246,7 +246,7 @@ TEST(RegisterOut, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
     uint8_t register_params[64];
     memset(register_params, 4, 64);
 
@@ -275,7 +275,7 @@ TEST(RegisterIn, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
     uint8_t register_params[64];
     memset(register_params, 4, 64);
 
@@ -309,7 +309,7 @@ TEST(AuthOut, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
     uint8_t register_params[64];
     memset(register_params, 4, 64);
 
@@ -361,7 +361,7 @@ TEST(AuthIn, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
     uint8_t register_params[64];
     memset(register_params, 4, 64);
 
@@ -416,7 +416,7 @@ TEST(AuthInCheck, USB)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
     uint8_t register_params[64];
     memset(register_params, 4, 64);
 

@@ -14,7 +14,8 @@ TEST(USB, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_rc rc = u2f_emu_vdev_new_from_dir(&vdev,
+            U2F_EMU_USB, SETUP_DIR);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_OK);
@@ -30,7 +31,8 @@ TEST(USBWrongSetupDir, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_USB, "nop");
+    u2f_emu_rc rc = u2f_emu_vdev_new_from_dir(&vdev,
+            U2F_EMU_USB, "nop");
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_MEMORY_ERROR);
@@ -46,7 +48,8 @@ TEST(NFC, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_NFC, SETUP_DIR);
+    u2f_emu_rc rc = u2f_emu_vdev_new_from_dir(&vdev,
+            U2F_EMU_NFC, SETUP_DIR);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_SUPPORTED_ERROR);
@@ -62,7 +65,8 @@ TEST(BL, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_BLUETOOTH, SETUP_DIR);
+    u2f_emu_rc rc = u2f_emu_vdev_new_from_dir(&vdev,
+            U2F_EMU_BLUETOOTH, SETUP_DIR);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_SUPPORTED_ERROR);
@@ -78,7 +82,8 @@ TEST(Agnostic, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_APDU, SETUP_DIR);
+    u2f_emu_rc rc = u2f_emu_vdev_new_from_dir(&vdev,
+            U2F_EMU_APDU, SETUP_DIR);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_SUPPORTED_ERROR);
@@ -95,8 +100,8 @@ TEST(WrongTransport, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, (u2f_emu_transport)-1,
-            SETUP_DIR);
+    u2f_emu_rc rc = u2f_emu_vdev_new_from_dir(&vdev,
+            (u2f_emu_transport) - 1, SETUP_DIR);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_SUPPORTED_ERROR);
@@ -110,7 +115,7 @@ TEST(BasicUSB, BasicAPDU)
 {
     /* Given */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_vdev_new(&vdev, U2F_EMU_USB, SETUP_DIR);
+    u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     /* When */
     u2f_emu_rc rc = u2f_emu_vdev_set_apdu(vdev, U2F_EMU_EXTENDED);
