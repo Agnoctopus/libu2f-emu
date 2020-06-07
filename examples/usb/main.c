@@ -25,7 +25,8 @@ int main(int argc, char *argv[])
 
     /* New U2F virtual emulatted device */
     u2f_emu_vdev *vdev = NULL;
-    if (u2f_emu_vdev_new(&vdev, U2F_EMU_USB, setup_dir) != U2F_EMU_OK)
+    if (u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, setup_dir)
+            != U2F_EMU_OK)
     {
         /* Log */
         warnx("Failed to create a new U2F virtual emulated device.");
