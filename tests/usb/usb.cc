@@ -69,7 +69,7 @@ static struct message *usb_recv_response(u2f_emu_vdev *vdev)
     struct message *response = message_new(packet_init);
     if (response == NULL)
         return NULL;
-    free(packet_init);
+    u2f_emu_vdev_free_response((uint8_t *)packet_init);
 
     /* Fill message */
     struct packet_cont *packet_cont = NULL;
@@ -89,7 +89,7 @@ static struct message *usb_recv_response(u2f_emu_vdev *vdev)
             message_free(response);
             return NULL;
         }
-        free(packet_cont);
+        u2f_emu_vdev_free_response((uint8_t *)packet_cont);
     }
 
     return response;
