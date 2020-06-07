@@ -115,12 +115,10 @@ u2f_emu_rc u2f_emu_vdev_new_from_dir(u2f_emu_vdev **vdev_ref,
         u2f_emu_transport transport_type, const char *pathname)
 {
     /* Base instantation */
-    u2f_emu_rc rc = u2f_emu_vdev_base_new(vdev_ref, transport_type);
+    u2f_emu_vdev *vdev = NULL;
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev, transport_type);
     if (rc != U2F_EMU_OK)
         return rc;
-
-    /* Get virtual device */
-    u2f_emu_vdev *vdev = *vdev_ref;
 
     /* Counter */
     if (!counter_new_from_dir(pathname, &vdev->counter))
@@ -150,12 +148,10 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
         const struct u2f_emu_vdev_setup *info)
 {
     /* Base instantation */
-    u2f_emu_rc rc = u2f_emu_vdev_base_new(vdev_ref, transport_type);
+    u2f_emu_vdev *vdev = NULL;
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev, transport_type);
     if (rc != U2F_EMU_OK)
         return rc;
-
-    /* Get virtual device */
-    u2f_emu_vdev *vdev = *vdev_ref;
 
     /* Counter */
     vdev->counter = info->counter;
