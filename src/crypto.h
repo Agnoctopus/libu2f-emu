@@ -165,8 +165,8 @@ bool crypto_setup_from_dir(const char *pathname,
 ** \return Sucess: true.
 **         Failure: false.
 */
-bool crypto_setup(const uint8_t *certificate,
-        const uint8_t *private_key, const uint8_t entropy[48],
+bool crypto_setup(const char *certificate,
+        const char *private_key, const uint8_t entropy[48],
         struct crypto_core *crypto_core);
 
 /**

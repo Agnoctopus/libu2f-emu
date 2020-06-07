@@ -51,8 +51,8 @@ struct u2f_emu_vdev_counter {
 **        necessary elements to the device setup.
 */
 struct u2f_emu_vdev_setup {
-	uint8_t *certificate; /**< PEM ec certificate */
-	uint8_t *private_key; /**< PEM ec Private key of the certificate */
+	char *certificate; /**< PEM ec certificate */
+	char *private_key; /**< PEM ec Private key of the certificate */
 	uint8_t entropy[48]; /**< Random bits used in encryption */
   struct u2f_emu_vdev_counter *counter; /**< Counter */
 };

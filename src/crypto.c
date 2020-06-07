@@ -13,13 +13,13 @@
 
 
 /**
-** \brief Compute the pem length.
+** \brief Compute the PEM length.
 **
-** \param pem The pem.
-** \return Success: pem length.
+** \param pem The PEM.
+** \return Success: PEM length.
 **         Failure: 0.
 */
-static size_t crypto_pem_length(const uint8_t *pem)
+static size_t crypto_pem_length(const char *pem)
 {
     size_t length = 0;
     if (pem[length] != '-')
@@ -367,13 +367,13 @@ static X509 *crypto_x509_from_file(int dirfd,
 }
 
 /**
-** \brief Get the x509 from pem.
+** \brief Get the x509 from PEM.
 **
 ** \param x509_pem The x509 PEM.
 ** \return Success: The x509.
 **         Failure: NULL.
 */
-static X509 *crypto_x509_from_pem(const uint8_t *x509_pem)
+static X509 *crypto_x509_from_pem(const char *x509_pem)
 {
     /* Pem length */
     size_t pem_length = crypto_pem_length(x509_pem);
@@ -430,7 +430,7 @@ static EC_KEY *crypto_ec_privkey_from_path(int dirfd,
 **         Failure: NULL.
 */
 static EC_KEY *crypto_ec_privkey_from_pem(
-        const uint8_t *private_key_pem)
+        const char *private_key_pem)
 {
     /* Pem length */
     size_t pem_length = crypto_pem_length(private_key_pem);
@@ -501,8 +501,8 @@ EC_KEY *crypto_ec_pubkey_from_priv(EC_KEY *privkey)
     return pubkey;
 }
 
-bool crypto_setup(const uint8_t *certificate,
-        const uint8_t *private_key, const uint8_t entropy[48],
+bool crypto_setup(const char *certificate,
+        const char *private_key, const uint8_t entropy[48],
         struct crypto_core *crypto_core)
 {
     /* Entropy */
