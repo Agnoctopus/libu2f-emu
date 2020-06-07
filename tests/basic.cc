@@ -78,7 +78,7 @@ TEST(Agnostic, BasicNew)
     u2f_emu_vdev *vdev = NULL;
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_AGNOSTIC, SETUP_DIR);
+    u2f_emu_rc rc = u2f_emu_vdev_new(&vdev, U2F_EMU_APDU, SETUP_DIR);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_SUPPORTED_ERROR);
