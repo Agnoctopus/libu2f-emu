@@ -332,14 +332,16 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
     authenticate_response_user_pre(payload, true);
 
     /* Counter */
-    authenticate_response_counter(payload, vdev->counter.value);
+    uint32_t counter_value =
+            vdev->counter->counter_read(vdev->counter);
+    authenticate_response_counter(payload, counter_value);
 
     /* Signature */
     authenticate_response_signature(payload,
         key,
         &params,
         1,
-        vdev->counter.value);
+        counter_value);
 
     /* SW */
     authenticate_response_sw(payload, SW_NO_ERROR);
@@ -350,7 +352,7 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
     EC_KEY_free(key);
 
     /* Increment counter */
-    counter_increment(&vdev->counter);
+    vdev->counter->counter_increment(vdev->counter);
 
     return payload;
 }

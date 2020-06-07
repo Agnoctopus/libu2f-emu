@@ -17,11 +17,9 @@ struct u2f_emu_vdev
     void *transport_state; /**< Transport state */
     u2f_emu_apdu apdu; /**< Apdu format */
 
-    /* Crypto core */
+    /* Core */
     struct crypto_core crypto_core; /**< Crypto core */
-
-    /* Global attributes */
-    struct counter counter;
+    struct u2f_emu_vdev_counter *counter; /**< Global counter */
 };
 
 
