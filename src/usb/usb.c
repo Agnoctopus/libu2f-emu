@@ -212,7 +212,7 @@ size_t u2f_emu_vdev_usb_get_response(void *state, uint8_t **data)
     return PACKET_SIZE;
 }
 
-transport_t usb_transport =
+transport_info_t usb_transport =
 {
     .type = U2F_EMU_USB,
     .state_init = u2f_emu_vdev_usb_state_init,

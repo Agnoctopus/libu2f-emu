@@ -33,7 +33,6 @@ void u2f_emu_vdev_free_response(uint8_t *data)
     free(data);
 }
 
-
 u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
     u2f_emu_apdu apdu)
 {
@@ -88,8 +87,9 @@ static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
     *vdev_ref = NULL;
 
     /* Get the transport */
-    const transport_t *transport = transport_get(transport_type);
-    if (transport == NULL)
+    const transport_info_t *transport_info =
+            transport_info_get(transport_type);
+    if (transport_info == NULL)
         return U2F_EMU_SUPPORTED_ERROR;
 
     /* Allocate */
@@ -97,8 +97,16 @@ static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
     if (vdev == NULL)
         return U2F_EMU_MEMORY_ERROR;
 
+    /* Transport core */
+    if (!transport_core_new(vdev, &vdev->transport_core))
+    {
+        /* Release */
+        free(vdev);
+        return false;
+    }
+
     /* Initialize transport */
-    vdev->transport = transport;
+    vdev->transport = transport_info;
     vdev->apdu = U2F_EMU_EXTENDED;
 
     /* Transport state */

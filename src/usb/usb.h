@@ -12,7 +12,7 @@
 /**
 ** \brief The USB transport
 */
-extern transport_t usb_transport;
+extern transport_info_t usb_transport;
 
 /**
 ** \brief USB transport state.
