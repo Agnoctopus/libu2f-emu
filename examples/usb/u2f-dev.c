@@ -93,17 +93,19 @@ static void u2f_dev_uhid_event_handler(
     size_t packet_size = event.u.output.size - 1;
 
     /* Handle packet */
-    u2f_emu_vdev_process(usb_vdev->vdev, packet, packet_size);
+    u2f_emu_vdev_send(usb_vdev->vdev, U2F_EMU_USB,
+            packet, packet_size);
 
     /* Handle responses */
     uint8_t *data = NULL;
     size_t data_len = 0;
 
     /* Loop while response parts */
-    while (u2f_emu_vdev_has_response(usb_vdev->vdev))
+    while (u2f_emu_vdev_has_response(usb_vdev->vdev, U2F_EMU_USB))
     {
         /* Get response part */
-        data_len = u2f_emu_vdev_get_response(usb_vdev->vdev, &data);
+        data_len = u2f_emu_vdev_get_response(usb_vdev->vdev,
+                U2F_EMU_USB, &data);
 
         /* Send response part */
         uhid_dev_send_input(usb_vdev->fd, data, data_len);
