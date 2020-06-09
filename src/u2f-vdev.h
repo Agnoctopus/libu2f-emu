@@ -13,11 +13,7 @@
 struct u2f_emu_vdev
 {
     /* Transports */
-    struct transport_controller *transport_controller;
-
-    const transport_info_t *transport; /**< Underlaying transport */
-    void *transport_state; /**< Transport state */
-    u2f_emu_apdu apdu; /**< Apdu format */
+    struct transport_core *transport_core; /**< Transport core */
 
     /* Core */
     struct crypto_core crypto_core; /**< Crypto core */

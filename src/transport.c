@@ -21,7 +21,7 @@ static const size_t transports_info_nb =
 /**
 ** \brief Transport core.
 */
-struct transport_controller
+struct transport_core
 {
     /* Transports array */
     struct transport *transports;
@@ -39,32 +39,48 @@ const transport_info_t *transport_info_get(u2f_emu_transport type)
 }
 
 const struct transport *transport_get(
-        const struct transport_controller *controller,
+        const struct transport_core *core,
         u2f_emu_transport type)
 {
     /* Loop through transports info */
     for (size_t i = 0; i < transports_info_nb; ++i)
     {
-        if (type == controller->transports[i].info->type)
-            return &controller->transports[i];
+        if (type == core->transports[i].info->type)
+            return &core->transports[i];
     }
     return NULL;
 }
 
-bool transport_controller_new(u2f_emu_vdev *vdev,
-        struct transport_controller **controller_ref)
+void transport_core_free(struct transport_core *core)
+{
+    /* Loop through transports info */
+    for (size_t i = 0; i < transports_info_nb; ++i)
+    {
+        /* Get transpotr */
+        struct transport *transport = &core->transports[i];
+
+        /* Free it */
+        transport->info->state_free(transport->state);
+    }
+    free(core->transports);
+    free(core);
+}
+
+
+bool transport_core_new(u2f_emu_vdev *vdev,
+        struct transport_core **core_ref)
 {
     /* Allocate core */
-    struct transport_controller *controller;
-    controller = malloc(sizeof(struct transport_controller));
-    if (controller == NULL)
+    struct transport_core *core;
+    core = malloc(sizeof(struct transport_core));
+    if (core == NULL)
         return false;
 
     /* Allocate transports */
     struct transport *transports = malloc(sizeof(struct transport));
     if (transports == NULL)
     {
-        free(controller);
+        free(core);
         return transports;
     }
 
@@ -85,13 +101,13 @@ bool transport_controller_new(u2f_emu_vdev *vdev,
             for (size_t j = 0; j < i; ++j)
                 transport_info->state_free(&transports[i]);
             free(transports);
-            free(controller);
+            free(core);
             return false;
         }
     }
     /* Reference */
-    controller->transports = transports;
-    *controller_ref = controller;
+    core->transports = transports;
+    *core_ref = core;
 
     return true;
 }

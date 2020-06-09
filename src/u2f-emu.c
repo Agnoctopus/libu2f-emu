@@ -6,26 +6,45 @@
 #include "usb/usb.h"
 
 
-u2f_emu_rc u2f_emu_vdev_process(u2f_emu_vdev *vdev,
+u2f_emu_rc u2f_emu_vdev_send(u2f_emu_vdev *vdev,
+        u2f_emu_transport transport_type,
         const void *data, size_t size)
 {
+    /* Get transport */
+    const struct transport *transport =
+            transport_get(vdev->transport_core, transport_type);
+    if (transport == NULL)
+        return U2F_EMU_SUPPORTED_ERROR;
+
     /* Process input */
-    vdev->transport->input_handler(vdev->transport_state, data,
-            size);
+    transport->info->input_handler(transport->state, data, size);
     return U2F_EMU_OK;
 }
 
-bool u2f_emu_vdev_has_response(u2f_emu_vdev *vdev)
+bool u2f_emu_vdev_has_response(u2f_emu_vdev *vdev,
+        u2f_emu_transport transport_type)
 {
+    /* Get transport */
+    const struct transport *transport =
+            transport_get(vdev->transport_core, transport_type);
+    if (transport == NULL)
+        return U2F_EMU_SUPPORTED_ERROR;
+
     /* Check response precense */
-    return vdev->transport->has_response(vdev->transport_state);
+    return transport->info->has_response(transport->state);
 }
 
-size_t u2f_emu_vdev_get_response(u2f_emu_vdev *vdev, uint8_t **data)
+size_t u2f_emu_vdev_get_response(u2f_emu_vdev *vdev,
+        u2f_emu_transport transport_type, uint8_t **data)
 {
+    /* Get transport */
+    const struct transport *transport =
+            transport_get(vdev->transport_core, transport_type);
+    if (transport == NULL)
+        return U2F_EMU_SUPPORTED_ERROR;
+
     /* Get response */
-    return vdev->transport->get_response(vdev->transport_state,
-            data);
+    return transport->info->get_response(transport->state, data);
 }
 
 void u2f_emu_vdev_free_response(uint8_t *data)
@@ -34,38 +53,20 @@ void u2f_emu_vdev_free_response(uint8_t *data)
 }
 
 u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
-    u2f_emu_apdu apdu)
+    u2f_emu_transport transport_type, u2f_emu_apdu apdu)
 {
-    /* Check permissions */
-    if (vdev->transport->type != U2F_EMU_NFC
-        && vdev->transport->type != U2F_EMU_APDU)
+    /* Get transport */
+    const struct transport *transport =
+            transport_get(vdev->transport_core, transport_type);
+    if (transport == NULL)
+        return U2F_EMU_SUPPORTED_ERROR;
+
+    /* Check permission */
+    if (transport->info->set_apdu == NULL)
         return U2F_EMU_PERMISSION_ERROR;
 
-    /* Set apdu */
-    vdev->apdu = apdu;
-
-    return U2F_EMU_OK;
-}
-
-/**
-** \brief Init the transport state of an U2F virtual device.
-**
-** \param vdev The virtual device.
-**
-** \return Success: U2F_EMU_OK.
-**         Failure: - transport does not exist, or is not
-**                    implemented: U2F_EMU_SUPPORTED_ERROR:.
-**                  - failed to init the transport
-**                    state: U2F_EMU_TRANSPORT_ERROR.
-*/
-static u2f_emu_rc u2f_emu_vdev_transport_state_init(
-        u2f_emu_vdev *vdev)
-{
-    /* Init the transport state */
-    int ret = vdev->transport->state_init(vdev,
-            &vdev->transport_state);
-    if (ret < 0)
-        return U2F_EMU_TRANSPORT_ERROR;
+    /* Set APDU */
+    transport->info->set_apdu(transport->state, apdu);
     return U2F_EMU_OK;
 }
 
@@ -98,25 +99,11 @@ static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
         return U2F_EMU_MEMORY_ERROR;
 
     /* Transport core */
-    if (!transport_controller_new(vdev, &vdev->transport_controller))
+    if (!transport_core_new(vdev, &vdev->transport_core))
     {
         /* Release */
         free(vdev);
-        return false;
-    }
-
-    /* Initialize transport */
-    vdev->transport = transport_info;
-    vdev->apdu = U2F_EMU_EXTENDED;
-
-    /* Transport state */
-    u2f_emu_rc rc =
-        u2f_emu_vdev_transport_state_init(vdev);
-    if (rc != U2F_EMU_OK)
-    {
-        /* Release */
-        free(vdev);
-        return rc;
+        return U2F_EMU_TRANSPORT_ERROR;
     }
 
     /* Reference */
@@ -191,7 +178,7 @@ void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
         return;
 
     /* Release */
-    vdev->transport->state_free(vdev->transport_state);
+    transport_core_free(vdev->transport_core);
     crypto_release(&vdev->crypto_core);
     if (vdev->is_user_counter)
         return;

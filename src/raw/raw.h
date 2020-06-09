@@ -55,7 +55,6 @@ struct frame_header
 struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
         const void *apdu, size_t size);
 
-
 /**
 ** \brief Handle authentification request.
 **
@@ -77,5 +76,7 @@ struct payload *raw_authenticate(u2f_emu_vdev *vdev,
 */
 struct payload *raw_register(u2f_emu_vdev *vdev,
         const uint8_t *apdu, size_t size);
+
+
 
 #endif

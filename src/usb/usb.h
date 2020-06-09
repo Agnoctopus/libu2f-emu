@@ -29,7 +29,6 @@ struct usb_state
     struct transaction transaction; /**< Current transaction */
     bool in_transaction; /**< Are we in a transaction */
     struct message *response; /**< Last response */
-
 };
 
 /**
