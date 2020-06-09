@@ -22,7 +22,7 @@ TEST(NoResponse, USB)
     u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     /* When */
-    bool ret = u2f_emu_vdev_has_response(vdev);
+    bool ret = u2f_emu_vdev_has_response(vdev, U2F_EMU_USB);
 
     /* Then */
     EXPECT_FALSE(ret);
@@ -45,8 +45,8 @@ static bool usb_send_request(u2f_emu_vdev *vdev,
         end = !message_next_packet(request, &packet);
 
         /* Process it */
-        u2f_emu_rc rc = u2f_emu_vdev_process(vdev, packet,
-                PACKET_SIZE);
+        u2f_emu_rc rc = u2f_emu_vdev_send(vdev, U2F_EMU_USB,
+                packet, PACKET_SIZE);
         if (rc != U2F_EMU_OK)
             return false;
 
@@ -60,7 +60,7 @@ static struct message *usb_recv_response(u2f_emu_vdev *vdev)
 {
     /* Get init packet */
     struct packet_init *packet_init = NULL;
-    size_t size = u2f_emu_vdev_get_response(vdev,
+    size_t size = u2f_emu_vdev_get_response(vdev, U2F_EMU_USB,
             (uint8_t **)&packet_init);
     if (size != PACKET_SIZE)
         return NULL;
@@ -73,10 +73,10 @@ static struct message *usb_recv_response(u2f_emu_vdev *vdev)
 
     /* Fill message */
     struct packet_cont *packet_cont = NULL;
-    while (u2f_emu_vdev_has_response(vdev))
+    while (u2f_emu_vdev_has_response(vdev, U2F_EMU_USB))
     {
         /* Get next response part */
-        size = u2f_emu_vdev_get_response(vdev,
+        size = u2f_emu_vdev_get_response(vdev, U2F_EMU_USB,
                 (uint8_t **)&packet_cont);
         if (size != PACKET_SIZE)
         {
@@ -111,7 +111,7 @@ TEST(InitOut, USB)
 
     /* Then */
     EXPECT_TRUE(ret);
-    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     message_free(request);
@@ -136,7 +136,7 @@ TEST(InitIn, USB)
     /* Then */
     EXPECT_NE(response, nullptr);
     EXPECT_EQ(response->payload->size, 17);
-    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
     for (int i = 0; i < 8; ++i)
         EXPECT_EQ(response->payload->data[i], nonce[i]);
     uint32_t cid = ((uint32_t *)response->payload->data)[3];
@@ -170,7 +170,7 @@ TEST(VersionOut, USB)
 
     /* Then */
     EXPECT_TRUE(ret);
-    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     message_free(request);
@@ -198,7 +198,7 @@ TEST(VersionIn, USB)
     /* Then */
     EXPECT_NE(response, nullptr);
     EXPECT_EQ(response->payload->size, 8);
-    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
     for (int i = 0; i < (int)strlen(VERSION_STR); ++i)
         EXPECT_EQ(response->payload->data[i], VERSION_STR[i]);
     EXPECT_EQ(response->payload->data[6], SW_NO_ERROR >> 8);
@@ -264,7 +264,7 @@ TEST(RegisterOut, USB)
 
     /* Then */
     EXPECT_TRUE(ret);
-    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     message_free(request);
@@ -296,7 +296,7 @@ TEST(RegisterIn, USB)
     /* Then */
     EXPECT_NE(response, nullptr);
     EXPECT_EQ(response->cmd, CMD_MSG);
-    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     message_free(request);
@@ -347,7 +347,7 @@ TEST(AuthOut, USB)
 
     /* Then */
     EXPECT_TRUE(ret);
-    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_TRUE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     free(key_handle);
@@ -401,7 +401,7 @@ TEST(AuthIn, USB)
     /* Then */
     EXPECT_NE(auth_response, nullptr);
     EXPECT_EQ(auth_response->cmd, CMD_MSG);
-    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     free(key_handle);
@@ -456,7 +456,7 @@ TEST(AuthInCheck, USB)
     /* Then */
     EXPECT_NE(auth_response, nullptr);
     EXPECT_EQ(auth_response->cmd, CMD_MSG);
-    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev));
+    EXPECT_FALSE(u2f_emu_vdev_has_response(vdev, U2F_EMU_USB));
 
     /* After */
     free(key_handle);

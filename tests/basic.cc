@@ -118,7 +118,8 @@ TEST(BasicUSB, BasicAPDU)
     u2f_emu_vdev_new_from_dir(&vdev, U2F_EMU_USB, SETUP_DIR);
 
     /* When */
-    u2f_emu_rc rc = u2f_emu_vdev_set_apdu(vdev, U2F_EMU_EXTENDED);
+    u2f_emu_rc rc = u2f_emu_vdev_set_apdu(vdev, U2F_EMU_USB,
+            U2F_EMU_EXTENDED);
 
     /* Then */
     EXPECT_EQ(rc, U2F_EMU_PERMISSION_ERROR);
