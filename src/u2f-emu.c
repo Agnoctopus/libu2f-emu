@@ -98,7 +98,7 @@ static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
         return U2F_EMU_MEMORY_ERROR;
 
     /* Transport core */
-    if (!transport_core_new(vdev, &vdev->transport_core))
+    if (!transport_controller_new(vdev, &vdev->transport_controller))
     {
         /* Release */
         free(vdev);

@@ -8,9 +8,9 @@
 
 
 /**
-** \brief Transport core, managing transports.
+** \brief Transport controller, managing transports.
 */
-struct transport_core;
+struct transport_controller;
 
 /**
 ** \brief Transport state init handler.
@@ -73,8 +73,8 @@ struct transport
 ** \return Success: true.
 **         Failure: false.
 */
-bool transport_core_new(u2f_emu_vdev *vdev,
-        struct transport_core **core_ref);
+bool transport_controller_new(u2f_emu_vdev *vdev,
+        struct transport_controller **controller_ref);
 
 /**
 ** \brief Get a transport from a transport core.
@@ -85,7 +85,7 @@ bool transport_core_new(u2f_emu_vdev *vdev,
 **         Failure: NULL.
 */
 const struct transport *transport_get(
-        const struct transport_core *core,
+        const struct transport_controller *controller,
         u2f_emu_transport type);
 
 

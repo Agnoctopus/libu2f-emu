@@ -21,7 +21,7 @@ static const size_t transports_info_nb =
 /**
 ** \brief Transport core.
 */
-struct transport_core
+struct transport_controller
 {
     /* Transports array */
     struct transport *transports;
@@ -39,32 +39,32 @@ const transport_info_t *transport_info_get(u2f_emu_transport type)
 }
 
 const struct transport *transport_get(
-        const struct transport_core *core,
+        const struct transport_controller *controller,
         u2f_emu_transport type)
 {
     /* Loop through transports info */
     for (size_t i = 0; i < transports_info_nb; ++i)
     {
-        if (type == core->transports[i].info->type)
-            return &core->transports[i];
+        if (type == controller->transports[i].info->type)
+            return &controller->transports[i];
     }
     return NULL;
 }
 
-bool transport_core_new(u2f_emu_vdev *vdev,
-        struct transport_core **core_ref)
+bool transport_controller_new(u2f_emu_vdev *vdev,
+        struct transport_controller **controller_ref)
 {
     /* Allocate core */
-    struct transport_core *core;
-    core = malloc(sizeof(struct transport_core));
-    if (core == NULL)
+    struct transport_controller *controller;
+    controller = malloc(sizeof(struct transport_controller));
+    if (controller == NULL)
         return false;
 
     /* Allocate transports */
     struct transport *transports = malloc(sizeof(struct transport));
     if (transports == NULL)
     {
-        free(core);
+        free(controller);
         return transports;
     }
 
@@ -85,13 +85,13 @@ bool transport_core_new(u2f_emu_vdev *vdev,
             for (size_t j = 0; j < i; ++j)
                 transport_info->state_free(&transports[i]);
             free(transports);
-            free(core);
+            free(controller);
             return false;
         }
     }
     /* Reference */
-    core->transports = transports;
-    *core_ref = core;
+    controller->transports = transports;
+    *controller_ref = controller;
 
     return true;
 }
