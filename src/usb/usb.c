@@ -7,6 +7,47 @@
 #include "usb.h"
 
 
+bool u2f_emu_vdev_usb_has_response(void *state)
+{
+    /* USB state */
+    struct usb_state *usb_state = state;
+
+    return usb_state->response != NULL;
+}
+
+size_t u2f_emu_vdev_usb_get_response(void *state, uint8_t **data)
+{
+    /* USB state */
+    struct usb_state *usb_state = state;
+
+    /* Reset ref */
+    *data = NULL;
+
+    /* Check response precense */
+    if (!u2f_emu_vdev_usb_has_response(state))
+        return 0;
+
+    /* Next packet */
+    bool end = !message_next_packet(usb_state->response,
+            (void *)data);
+    if (end)
+    {
+        if (usb_state->in_transaction
+            && usb_state->response
+                == usb_state->transaction.response)
+        {
+            usb_state->in_transaction = false;
+            message_free(usb_state->transaction.request);
+        }
+        message_free(usb_state->response);
+        usb_state->response = NULL;
+    }
+    /* Error */
+    if (data == NULL)
+        return 0;
+    return PACKET_SIZE;
+}
+
 /**
 ** \brief The packet init handler.
 **
@@ -126,26 +167,6 @@ void u2f_emu_vdev_usb_process(void *state,
         usb_state->response = response;
 }
 
-int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
-        void **state_ref)
-{
-    /* Allocate */
-    struct usb_state *state = malloc(sizeof(struct usb_state));
-    if (state == NULL)
-        return -errno;
-
-    /* Attributes */
-    state->in_transaction = false;
-    state->cid_seed = time(NULL);
-    state->vdev = vdev;
-    state->response = NULL;
-
-    /* Referance */
-    *(struct usb_state **)state_ref = state;
-
-    return 0;
-}
-
 void u2f_emu_vdev_usb_state_free(void *state)
 {
     /* USB state */
@@ -171,45 +192,24 @@ void u2f_emu_vdev_usb_state_free(void *state)
     free(usb_state);
 }
 
-bool u2f_emu_vdev_usb_has_response(void *state)
+int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
+        void **state_ref)
 {
-    /* USB state */
-    struct usb_state *usb_state = state;
+    /* Allocate */
+    struct usb_state *state = malloc(sizeof(struct usb_state));
+    if (state == NULL)
+        return -errno;
 
-    return usb_state->response != NULL;
-}
+    /* Attributes */
+    state->in_transaction = false;
+    state->cid_seed = time(NULL);
+    state->vdev = vdev;
+    state->response = NULL;
 
-size_t u2f_emu_vdev_usb_get_response(void *state, uint8_t **data)
-{
-    /* USB state */
-    struct usb_state *usb_state = state;
+    /* Referance */
+    *(struct usb_state **)state_ref = state;
 
-    /* Reset ref */
-    *data = NULL;
-
-    /* Check response precense */
-    if (!u2f_emu_vdev_usb_has_response(state))
-        return 0;
-
-    /* Next packet */
-    bool end = !message_next_packet(usb_state->response,
-            (void *)data);
-    if (end)
-    {
-        if (usb_state->in_transaction
-            && usb_state->response
-                == usb_state->transaction.response)
-        {
-            usb_state->in_transaction = false;
-            message_free(usb_state->transaction.request);
-        }
-        message_free(usb_state->response);
-        usb_state->response = NULL;
-    }
-    /* Error */
-    if (data == NULL)
-        return 0;
-    return PACKET_SIZE;
+    return 0;
 }
 
 transport_info_t usb_transport =

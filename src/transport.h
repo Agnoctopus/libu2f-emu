@@ -41,7 +41,7 @@ typedef size_t (*get_response_t)(void *state, uint8_t **data);
 /**
 ** \brief APDU format setter
 */
-typedef bool (*set_apdu_t)(void *state, u2f_emu_apdu apdu);
+typedef void (*set_apdu_t)(void *state, u2f_emu_apdu apdu);
 
 /**
 ** \brief Transport info representation.
@@ -94,7 +94,6 @@ void transport_core_free(struct transport_core *core);
 const struct transport *transport_get(
         const struct transport_core *core,
         u2f_emu_transport type);
-
 
 /**
 ** \brief Get the transport info for a specific transport type.

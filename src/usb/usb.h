@@ -42,7 +42,6 @@ struct usb_state
 int u2f_emu_vdev_usb_state_init(u2f_emu_vdev *vdev,
         void **state_ref);
 
-
 /**
 ** \brief Free the USB state.
 **

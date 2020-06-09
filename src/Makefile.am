@@ -26,6 +26,8 @@ libu2f_emu_la_SOURCES += usb/packet.c usb/packet.h
 libu2f_emu_la_SOURCES += raw/raw.c raw/raw.h
 libu2f_emu_la_SOURCES += raw/authenticate.c
 libu2f_emu_la_SOURCES += raw/register.c
+# APDU
+libu2f_emu_la_SOURCES += apdu/apdu.c apdu/apdu.h
 # MISC
 libu2f_emu_la_SOURCES += u2f-emu.pc.in
 

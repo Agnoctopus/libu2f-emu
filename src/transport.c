@@ -2,6 +2,7 @@
 
 #include "transport.h"
 #include "usb/usb.h"
+#include "apdu/apdu.h"
 
 
 /**
@@ -9,7 +10,8 @@
 */
 static const transport_info_t *transports_info[] =
 {
-    &usb_transport
+    &usb_transport,
+    &apdu_transport
 };
 
 /**
@@ -77,7 +79,8 @@ bool transport_core_new(u2f_emu_vdev *vdev,
         return false;
 
     /* Allocate transports */
-    struct transport *transports = malloc(sizeof(struct transport));
+    struct transport *transports =
+            malloc(transports_info_nb * sizeof(struct transport));
     if (transports == NULL)
     {
         free(core);

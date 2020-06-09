@@ -22,6 +22,7 @@ set (SRC
     raw/authenticate.c
     raw/raw.c
     raw/register.c
+    apdu/apdu.c
     )
 
 # Headers
