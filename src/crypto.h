@@ -37,26 +37,26 @@ EC_KEY *crypto_ec_bytes_to_key(const unsigned char *buffer,
 /**
 ** \brief Decrypt data using AES.
 **
-** \param crypto_core The crypto core.
+** \param core The crypto core.
 ** \param data The data to decrypt.
 ** \param size The data size.
 ** \param buffer The resulting buffer where clear data is put.
 ** \return The size of the buffer.
 */
-size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
+size_t crypto_aes_decrypt(struct crypto_core* core,
         const unsigned char *data, int size,
         unsigned char **buffer);
 
 /**
 ** \brief Encrypt data using AES.
 **
-** \param crypto_core The crypto core.
+** \param core The crypto core.
 ** \param data The data to encrypt.
 ** \param data_len The data size.
 ** \param buffer The resulting buffer where cipher data is put.
 ** \return The size of the buffer.
 */
-size_t crypto_aes_encrypt(struct crypto_core* crypto_core,
+size_t crypto_aes_encrypt(struct crypto_core* core,
         const unsigned char *data, int data_len,
         unsigned char **buffer);
 
@@ -86,13 +86,13 @@ unsigned int crypto_ec_sign_with_key(EC_KEY *key,
 /**
 ** \brief Sign a digest.
 **
-** \param crypto_core The crypto core.
+** \param core The crypto core.
 ** \param digest The digest.
 ** \param digest_len The digest length?
 ** \param signature The ref buffer to put the signature.
 ** \return The size of the signature.
 */
-unsigned int crypto_ec_sign(struct crypto_core *crypto_core,
+unsigned int crypto_ec_sign(struct crypto_core *core,
         const unsigned char *digest,
         int digest_len,
         unsigned char **signature);
@@ -121,11 +121,11 @@ size_t crypto_ec_pubkey_to_bytes(const EC_KEY *key,
 /**
 ** \brief Get the x509 certificate bytes.
 **
-** \param crypto_core The crypto core.
+** \param core The crypto core.
 ** \param buffer The buffer to put the bytes.
 ** \return The buffer length.
 */
-int crypto_x509_get_bytes(struct crypto_core *crypto_core,
+int crypto_x509_get_bytes(struct crypto_core *core,
         unsigned char **buffer);
 
 /**
@@ -148,33 +148,42 @@ EC_KEY *crypto_ec_generate_key(void);
 ** \brief Setup a crypto core from a dir.
 **
 ** \param pathname The pathname of the setup directory.
-** \param crypto_core The crypto core to setup.
+** \param core_ref The crypto core to setup.
 ** \return Sucess: true.
 **         Failure: false.
 */
-bool crypto_setup_from_dir(const char *pathname,
-        struct crypto_core *crypto_core);
+bool crypto_new_from_dir(const char *pathname,
+        struct crypto_core **core_ref);
 
 /**
-** \brief Setup a crypto core.
+** \brief Instantiate a new ephemeral crypto core.
+**
+** \param core_ref The crypto core reference.
+** \return Sucess: true.
+**         Failure: false.
+*/
+bool crypto_new_ephemeral(struct crypto_core **core_ref);
+
+/**
+** \brief Instantiate a new crypto core.
 **
 ** \param certificate PEM ec certificate.
 ** \param private_key PEM ec Private key of the certificate.
 ** \param entropy Random bits used in encryption.
-** \param crypto_core The crypto core to setup.
+** \param core_ref The crypto core reference.
 ** \return Sucess: true.
 **         Failure: false.
 */
-bool crypto_setup(const char *certificate,
+bool crypto_new(const char *certificate,
         const char *private_key, const uint8_t entropy[48],
-        struct crypto_core *crypto_core);
+        struct crypto_core **core_ref);
 
 /**
 ** \brief Release the memory allocated by the crypto_core.
 **
-** \param crypto_core The crypto core to release.
+** \param core The crypto core to release.
 */
-void crypto_release(struct crypto_core *crypto_core);
+void crypto_free(struct crypto_core *core);
 
 
 #endif

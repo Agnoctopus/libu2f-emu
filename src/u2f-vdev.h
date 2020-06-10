@@ -16,7 +16,7 @@ struct u2f_emu_vdev
     struct transport_core *transport_core; /**< Transport core */
 
     /* Core */
-    struct crypto_core crypto_core; /**< Crypto core */
+    struct crypto_core *crypto_core; /**< Crypto core */
     struct u2f_emu_vdev_counter *counter; /**< Global counter */
 
     /* Other attributes */

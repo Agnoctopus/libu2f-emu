@@ -264,7 +264,7 @@ static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
     /* Key handle decrypt */
     size_t key_handle_size = 0;
     uint8_t *key_handle = authenticate_decrypt_key_handle_cipher(
-        &vdev->crypto_core,
+        vdev->crypto_core,
         key_handle_cipher,
         key_handle_cipher_size,
         &key_handle_size
@@ -318,7 +318,7 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
     /* Key handle decrypt */
     size_t key_handle_size = 0;
     uint8_t *key_handle = authenticate_decrypt_key_handle_cipher(
-        &vdev->crypto_core,
+        vdev->crypto_core,
         key_handle_cipher,
         params.key_handle_size,
         &key_handle_size

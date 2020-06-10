@@ -75,23 +75,15 @@ u2f_emu_rc u2f_emu_vdev_set_apdu(u2f_emu_vdev *vdev,
 **        with the transport configuration.
 **
 ** \param vdev_ref The virtual device reference.
-** \param transport_type The transport of the virtual device.
 ** \return Success: U2F_EMU_OK.
 **         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.
 **                  - not supported: U2F_EMU_SUPPORTED_ERROR.
 */
-static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type)
+static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref)
 {
     /* U2F virtual emulated device being instantiated */
     u2f_emu_vdev *vdev;
     *vdev_ref = NULL;
-
-    /* Get the transport */
-    const transport_info_t *transport_info =
-            transport_info_get(transport_type);
-    if (transport_info == NULL)
-        return U2F_EMU_SUPPORTED_ERROR;
 
     /* Allocate */
     vdev = malloc(sizeof(u2f_emu_vdev));
@@ -113,11 +105,11 @@ static u2f_emu_rc u2f_emu_vdev_base_new(u2f_emu_vdev **vdev_ref,
 }
 
 u2f_emu_rc u2f_emu_vdev_new_from_dir(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type, const char *pathname)
+        const char *pathname)
 {
     /* Base instantation */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev, transport_type);
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev);
     if (rc != U2F_EMU_OK)
         return rc;
 
@@ -131,9 +123,40 @@ u2f_emu_rc u2f_emu_vdev_new_from_dir(u2f_emu_vdev **vdev_ref,
 
 
     /* Crypto core */
-    if (!crypto_setup_from_dir(pathname, &vdev->crypto_core))
+    if (!crypto_new_from_dir(pathname, &vdev->crypto_core))
     {
-        counter_release(vdev->counter);
+        counter_free(vdev->counter);
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
+    }
+
+    /* Reference */
+    *vdev_ref = vdev;
+
+    return U2F_EMU_OK;
+}
+
+u2f_emu_rc u2f_emu_vdev_new_ephemeral(u2f_emu_vdev **vdev_ref)
+{
+    /* Base instantation */
+    u2f_emu_vdev *vdev = NULL;
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev);
+    if (rc != U2F_EMU_OK)
+        return rc;
+
+    /* Counter */
+    if (!counter_new_epthemeral(&vdev->counter))
+    {
+        free(vdev);
+        return U2F_EMU_MEMORY_ERROR;
+    }
+    vdev->is_user_counter = false;
+
+
+    /* Crypto core */
+    if (!crypto_new_ephemeral(&vdev->crypto_core))
+    {
+        counter_free(vdev->counter);
         free(vdev);
         return U2F_EMU_MEMORY_ERROR;
     }
@@ -145,12 +168,11 @@ u2f_emu_rc u2f_emu_vdev_new_from_dir(u2f_emu_vdev **vdev_ref,
 }
 
 u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type,
         const struct u2f_emu_vdev_setup *info)
 {
     /* Base instantation */
     u2f_emu_vdev *vdev = NULL;
-    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev, transport_type);
+    u2f_emu_rc rc = u2f_emu_vdev_base_new(&vdev);
     if (rc != U2F_EMU_OK)
         return rc;
 
@@ -159,7 +181,7 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     vdev->is_user_counter = true;
 
     /* Crypto core */
-    if (!crypto_setup_from_dir(NULL, &vdev->crypto_core))
+    if (!crypto_new_from_dir(NULL, &vdev->crypto_core))
     {
         free(vdev);
         return U2F_EMU_MEMORY_ERROR;
@@ -179,9 +201,8 @@ void u2f_emu_vdev_free(u2f_emu_vdev *vdev)
 
     /* Release */
     transport_core_free(vdev->transport_core);
-    crypto_release(&vdev->crypto_core);
-    if (vdev->is_user_counter)
-        return;
-    counter_release(vdev->counter);
+    crypto_free(vdev->crypto_core);
+    if (!vdev->is_user_counter)
+        counter_free(vdev->counter);
     free(vdev);
 }

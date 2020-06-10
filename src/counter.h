@@ -22,10 +22,20 @@ bool counter_new_from_dir(const char *pathname,
         struct u2f_emu_vdev_counter **counter_ref);
 
 /**
+** \brief Create a new ephemeral counter.
+**
+** \param counter_ref The reference to the counter to create.
+** \return Success: true.
+**         Failure: false.
+*/
+bool counter_new_epthemeral(
+        struct u2f_emu_vdev_counter **counter_ref);
+
+/**
 ** \brief Release the ressources used by the counter.
 **
 ** \param vdev_counter The virtual device counter to release.
 */
-void counter_release(struct u2f_emu_vdev_counter *vdev_counter);
+void counter_free(struct u2f_emu_vdev_counter *vdev_counter);
 
 #endif

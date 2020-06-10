@@ -21,7 +21,6 @@ const char *u2f_emu_strerror(u2f_emu_rc rc);
 **        setup dir.
 **
 ** \param vdev_ref The virtual device reference.
-** \param transport_type The transport of the virtual device.
 ** \param setup_dir The pathname of the setup dir for the device
 **                  configuration.
 ** \return Success: U2F_EMU_OK.
@@ -29,32 +28,28 @@ const char *u2f_emu_strerror(u2f_emu_rc rc);
 **                  - not supported: U2F_EMU_SUPPORTED_ERROR.
 */
 u2f_emu_rc u2f_emu_vdev_new_from_dir(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type, const char *pathname);
+        const char *pathname);
 
 /**
 ** \brief Instantiate a new ephemeral U2F virtual emulated device.
 **
 ** \param vdev_ref The virtual device reference.
-** \param transport_type The transport of the virtual device.
 ** \return Success: U2F_EMU_OK.
 **         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.
 **                  - not supported: U2F_EMU_SUPPORTED_ERROR.
 */
-u2f_emu_rc u2f_emu_vdev_new_ephemeral(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type);
+u2f_emu_rc u2f_emu_vdev_new_ephemeral(u2f_emu_vdev **vdev_ref);
 
 /**
 ** \brief Instantiate a new U2F virtual emulated device.
 **
 ** \param vdev_ref The virtual device reference.
-** \param transport_type The transport of the virtual device.
 ** \param info The setup structure for device configuration.
 ** \return Success: U2F_EMU_OK.
 **         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.
 **                  - not supported: U2F_EMU_SUPPORTED_ERROR.
 */
 u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
-        u2f_emu_transport transport_type,
         const struct u2f_emu_vdev_setup *info);
 
 /**

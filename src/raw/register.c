@@ -296,7 +296,7 @@ struct payload *raw_register(u2f_emu_vdev *vdev,
     /* Cipher Key handle */
     size_t key_handle_cipher_size = 0;
     uint8_t *key_handle_cipher = register_encrypt_key_handle(
-        &vdev->crypto_core,
+        vdev->crypto_core,
         key_handle,
         key_handle_size,
         &key_handle_cipher_size
@@ -310,11 +310,11 @@ struct payload *raw_register(u2f_emu_vdev *vdev,
     /* X509 */
     uint8_t *x509_buffer = NULL;
     size_t x509_buffer_size = crypto_x509_get_bytes(
-            &vdev->crypto_core, &x509_buffer);
+            vdev->crypto_core, &x509_buffer);
     register_reponse_x509(payload, x509_buffer, x509_buffer_size);
 
     /* Signature */
-    register_response_signature(&vdev->crypto_core,
+    register_response_signature(vdev->crypto_core,
         payload,
         key_handle_cipher,
         key_handle_cipher_size,

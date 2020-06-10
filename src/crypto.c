@@ -8,6 +8,7 @@
 
 #include <openssl/bio.h>
 #include <openssl/pem.h>
+#include <openssl/rand.h>
 
 #include "crypto.h"
 
@@ -298,6 +299,43 @@ int crypto_x509_get_bytes(struct crypto_core *crypto_core,
     return i2d_X509(crypto_core->cert, buffer);
 }
 
+static X509 *crypto_x509_generate(EC_KEY *key)
+{
+    /* x509 verision 2 */
+    X509 *cert = X509_new();
+    X509_set_version(cert, 0x2);
+
+    /* Serial */
+    uint64_t serial = 0;
+    if (RAND_priv_bytes((uint8_t *)&serial, sizeof(serial)) != 1)
+        return NULL;
+    ASN1_INTEGER_set_uint64(X509_get_serialNumber(cert), serial);
+
+    /* Before / After at */
+    X509_gmtime_adj(X509_get_notBefore(cert), 0);
+    X509_gmtime_adj(X509_get_notAfter(cert), 31536000L);
+
+    /* Pkey */
+    EVP_PKEY *pkey = EVP_PKEY_new();
+    EVP_PKEY_assign_EC_KEY(pkey, key);
+    X509_set_pubkey(cert, pkey);
+
+    /* Subject at name and issuer */
+    X509_NAME * name;
+    name = X509_get_subject_name(cert);
+
+    X509_NAME_add_entry_by_txt(name, "CN",  MBSTRING_ASC,
+            (unsigned char *)"U2F emulated", -1, -1, 0);
+
+    X509_set_issuer_name(cert, name);
+
+    /* Sign */
+    X509_sign(cert, pkey, EVP_sha256());
+    return cert;
+}
+
+
+
 EC_KEY *crypto_ec_generate_key(void)
 {
     /* Prepare ec key */
@@ -397,14 +435,14 @@ static X509 *crypto_x509_from_pem(const char *x509_pem)
 }
 
 /**
-** \brief Get the ec private key from path
+** \brief Get the ec private key from file
 **
 ** \param dirfd The dirfd to get pathname file.
 ** \param pathname The pathname of the ec private key.
 ** \return Success: The private key.
 **         Failure: NULL.
 */
-static EC_KEY *crypto_ec_privkey_from_path(int dirfd,
+static EC_KEY *crypto_ec_privkey_from_file(int dirfd,
         const char *pathname)
 {
     /* Open */
@@ -454,14 +492,14 @@ static EC_KEY *crypto_ec_privkey_from_pem(
 }
 
 /**
-** \brief Setup the entropy part of the crypto core.
+** \brief Get the entropy from file.
 **
 ** \param dirfd The dirfd to get pathname file.
 ** \param pathname The pathname of the entropy bits.
-** \param crypto_core The crypto core.
+** \param entropy The entropy to setu.
 */
-static bool crypto_setup_entropy(int dirfd, const char *pathname,
-        struct crypto_core *crypto_core)
+static bool crypto_entropy_from_file(int dirfd, const char *pathname,
+        uint8_t entropy[48])
 {
     /* Open */
     FILE *fp = crypto_open(dirfd, pathname);
@@ -469,7 +507,7 @@ static bool crypto_setup_entropy(int dirfd, const char *pathname,
         return false;
 
     /* Read entropy */
-    bool ok = fread(&crypto_core->entropy, 48, 1, fp) == 1;
+    bool ok = fread(entropy, 48, 1, fp) == 1;
 
     /* Close */
     fclose(fp);
@@ -501,33 +539,82 @@ EC_KEY *crypto_ec_pubkey_from_priv(EC_KEY *privkey)
     return pubkey;
 }
 
-bool crypto_setup(const char *certificate,
+bool crypto_new(const char *certificate,
         const char *private_key, const uint8_t entropy[48],
-        struct crypto_core *crypto_core)
+        struct crypto_core **core_ref)
 {
-    /* Entropy */
-    memcpy(crypto_core->entropy, entropy, 48);
-
     /* Certificate */
-    crypto_core->cert = crypto_x509_from_pem(certificate);
-    if (crypto_core->cert == NULL)
+    X509 *cert = crypto_x509_from_pem(certificate);
+    if (cert == NULL)
         return false;
 
     /* Private key */
-    crypto_core->privkey = crypto_ec_privkey_from_pem(private_key);
-    if (crypto_core->privkey == NULL)
+    EC_KEY *privkey = crypto_ec_privkey_from_pem(private_key);
+    if (privkey == NULL)
         return false;
 
     /* Pub key */
-    crypto_core->pubkey =
-            crypto_ec_pubkey_from_priv(crypto_core->privkey);
-    if (crypto_core->pubkey == NULL)
+    EC_KEY *pubkey = crypto_ec_pubkey_from_priv(privkey);
+    if (pubkey == NULL)
         return false;
+
+    /* Allocate */
+    struct crypto_core *core = malloc(sizeof(struct crypto_core));
+    if (core == NULL)
+        return false;
+
+    /* Initialize */
+    core->cert = cert;
+    core->privkey = privkey;
+    core->pubkey = pubkey;
+    memcpy(core->entropy, entropy, 48);
+
+    /* Reference */
+    *core_ref = core;
+
     return true;
 }
 
-bool crypto_setup_from_dir(const char *pathname,
-        struct crypto_core *crypto_core)
+bool crypto_new_ephemeral(struct crypto_core **core_ref)
+{
+    /* Private key */
+    EC_KEY *privkey = crypto_ec_generate_key();
+    if (privkey == NULL)
+        return false;
+
+    /* Pub key */
+    EC_KEY *pubkey = crypto_ec_pubkey_from_priv(privkey);
+    if (pubkey == NULL)
+        return false;
+
+    /* Certificate */
+    X509 *cert = crypto_x509_generate(privkey);
+    if (cert == NULL)
+        return false;
+
+    /* Allocate */
+    struct crypto_core *core = malloc(sizeof(struct crypto_core));
+    if (core == NULL)
+        return false;
+
+    uint8_t entropy[48];
+    if (RAND_priv_bytes(entropy, 48) != 1)
+        return false;
+
+    /* Initialize */
+    core->cert = cert;
+    core->privkey = privkey;
+    core->pubkey = pubkey;
+    memcpy(core->entropy, entropy, 48);
+
+    /* Reference */
+    *core_ref = core;
+
+    return true;
+}
+
+bool crypto_new_from_dir(const char *pathname,
+        struct crypto_core **core_ref)
 {
     /* Open dir */
     int dirfd = openat(AT_FDCWD, pathname,
@@ -536,43 +623,54 @@ bool crypto_setup_from_dir(const char *pathname,
         return false;
 
     /* Entropy */
-    if (!crypto_setup_entropy(dirfd, CRYPTO_ENTROPY_FILENAME,
-            crypto_core))
+    uint8_t entropy[48];
+    if (!crypto_entropy_from_file(dirfd, CRYPTO_ENTROPY_FILENAME,
+            entropy))
     {
         close(dirfd);
         return false;
     }
 
     /* Certificate */
-    crypto_core->cert =
-            crypto_x509_from_file(dirfd, CRYPTO_CERT_FILENAME);
-    if (crypto_core->cert == NULL)
+    X509 *cert = crypto_x509_from_file(dirfd, CRYPTO_CERT_FILENAME);
+    if (cert == NULL)
     {
         close(dirfd);
         return false;
     }
 
     /* Private key */
-    crypto_core->privkey = crypto_ec_privkey_from_path(dirfd,
+    EC_KEY *privkey = crypto_ec_privkey_from_file(dirfd,
             CRYPTO_PRIVKEY_FILENAME);
     close(dirfd);
-    if (crypto_core->privkey == NULL)
+    if (privkey == NULL)
         return false;
 
     /* Pub key */
-    crypto_core->pubkey =
-            crypto_ec_pubkey_from_priv(crypto_core->privkey);
-    if (crypto_core->pubkey == NULL)
+    EC_KEY *pubkey =
+            crypto_ec_pubkey_from_priv(privkey);
+    if (pubkey == NULL)
         return false;
 
-    /* Close */
-    close(dirfd);
+    /* Allocate */
+    struct crypto_core *core = malloc(sizeof(struct crypto_core));
+    if (core == NULL)
+        return false;
+
+    /* Initialize */
+    core->cert = cert;
+    core->privkey = privkey;
+    core->pubkey = pubkey;
+    memcpy(core->entropy, entropy, 48);
+
+    /* Reference */
+    *core_ref = core;
 
     return true;
 }
 
 
-void crypto_release(struct crypto_core *crypto_core)
+void crypto_free(struct crypto_core *crypto_core)
 {
     X509_free(crypto_core->cert);
     EC_KEY_free(crypto_core->pubkey);
