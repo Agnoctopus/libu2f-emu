@@ -69,6 +69,7 @@ struct transport
 /**
 ** \brief Create a new transport_core that manage all transports
 **
+** \param vdev The virtual device.
 ** \param core_ref The reference to the transport core to create.
 ** \return Success: true.
 **         Failure: false.

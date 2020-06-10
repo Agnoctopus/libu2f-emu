@@ -21,7 +21,7 @@ const char *u2f_emu_strerror(u2f_emu_rc rc);
 **        setup dir.
 **
 ** \param vdev_ref The virtual device reference.
-** \param setup_dir The pathname of the setup dir for the device
+** \param pathname The pathname of the setup dir for the device
 **                  configuration.
 ** \return Success: U2F_EMU_OK.
 **         Failure: - memory allocation: U2F_EMU_MEMORY_ERROR.

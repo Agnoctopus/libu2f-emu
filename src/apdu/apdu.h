@@ -73,11 +73,10 @@ bool u2f_emu_vdev_apdu_has_response(void *state);
 size_t u2f_emu_vdev_apdu_get_response(void *state, uint8_t **data);
 
 /**
-** \brief Get the response frim the APDU transport.
+** \brief Set the APDU formatof the APDU transport.
 **
 ** \param state The APDU transport state.
-** \param data The data ref buffer to put rhe resonse
-** \return The size of the allocated data.
+** \param apdu The APDU format to set.
 */
 void u2f_emu_vdev_apdu_set_apdu(void *state, u2f_emu_apdu apdu);
 
