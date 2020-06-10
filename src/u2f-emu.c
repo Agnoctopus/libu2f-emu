@@ -181,7 +181,8 @@ u2f_emu_rc u2f_emu_vdev_new(u2f_emu_vdev **vdev_ref,
     vdev->is_user_counter = true;
 
     /* Crypto core */
-    if (!crypto_new_from_dir(NULL, &vdev->crypto_core))
+    if (!crypto_new(info->certificate,
+            info->private_key, info->entropy, &vdev->crypto_core))
     {
         free(vdev);
         return U2F_EMU_MEMORY_ERROR;

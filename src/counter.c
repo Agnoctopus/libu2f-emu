@@ -24,8 +24,6 @@ struct counter
     bool is_synced; /**< Is the counter synced with a file */
 };
 
-
-
 /**
 ** \brief Increment the counter of an U2F virtual device.
 **
