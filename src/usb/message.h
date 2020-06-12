@@ -66,6 +66,27 @@ struct message *message_new_from_data(uint32_t cid, uint8_t cmd,
         const uint8_t *data, size_t size);
 
 /**
+** \brief Allocate and initialize a new message from payload.
+**
+** \param cid The channel id.
+** \param cmd The associated command.
+** \param payload The payload ot put in the message.
+** \return Success: The new allocated and initialized message.
+**         Failure: NULL.
+*/
+struct message *message_new_from_payload(uint32_t cid, uint8_t cmd,
+        const struct payload *payload);
+
+/**
+** \brief Allocate and initialize a new message from another message.
+**
+** \param message The message to copy.
+** \return Success: The new allocated and initialized message.
+**         Failure: NULL.
+*/
+struct message *message_copy(const struct message *message);
+
+/**
 ** \brief Add data to a message.
 **
 ** \param message The message to add data to.

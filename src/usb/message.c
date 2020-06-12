@@ -86,6 +86,20 @@ struct message *message_new_from_data(uint32_t cid, uint8_t cmd,
     return message;
 }
 
+struct message *message_new_from_payload(uint32_t cid, uint8_t cmd,
+        const struct payload *payload)
+{
+    return message_new_from_data(cid, cmd, payload->data,
+            payload->size);
+}
+
+struct message *message_copy(const struct message *message)
+{
+    return message_new_from_data(message->cid, message->cmd,
+            message->payload->data, message->payload->size);
+}
+
+
 bool message_add_data(struct message *message,
         const uint8_t *data, size_t size)
 {
