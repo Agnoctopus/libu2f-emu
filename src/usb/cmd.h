@@ -36,7 +36,6 @@
 #define ERR_OTHER           0x7f /**< Other unspecified error */
 
 /* Init CMD informations */
-#define U2FHID_INIT_BCNT 8
 #define PROTOCOL_VERSION 2
 #define MAJ_DEV_VERSION 0
 #define MIN_DEV_VERSION 1

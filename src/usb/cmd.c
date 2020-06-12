@@ -5,6 +5,9 @@
 #include "raw/raw.h"
 
 
+/* Unused macro */
+#define __unused __attribute__((unused))
+
 /**
 ** \brief Commands handler for U2FHID commands processing.
 */
@@ -133,7 +136,7 @@ struct message *cmd_generate_error(uint32_t cid, uint8_t error)
 ** \return The response.
 */
 static struct message *cmd_ping_handler(
-        struct usb_state *state __attribute__ ((unused)),
+        struct usb_state *state __unused,
         const struct message *request)
 {
     /* Echo the ping  */
@@ -182,9 +185,20 @@ static struct message *cmd_lock_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void)state;
-    (void)request;
-    return NULL;
+    /* Check message size */
+    if (request->bcnt != 1)
+        return NULL;
+
+    /* Get the dalay and clamp it */
+    uint8_t delay = request->payload->data[0];
+    if (delay > 10)
+        delay = 10;
+
+    /* Set time */
+    state->transaction.start_time =
+            (time(NULL) + delay) - TIMEOUT_SECONDS;
+
+    return message_new_blank(request->cid, request->cmd);
 }
 
 /**
@@ -198,9 +212,11 @@ static struct message *cmd_wink_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void)state;
-    (void)request;
-    return NULL;
+    /* Check message size */
+    if (request->bcnt != 0)
+        return NULL;
+
+    return message_new_blank(request->cid, request->cmd);
 }
 
 /**
@@ -211,12 +227,11 @@ static struct message *cmd_wink_handler(
 ** \return The response.
 */
 static struct message *cmd_init_handler(
-        struct usb_state *state,
+        struct usb_state *state __unused,
         const struct message *request)
 {
-    (void)state;
-    /* Check message size*/
-    if (request->bcnt != U2FHID_INIT_BCNT)
+    /* Check message size */
+    if (request->bcnt != 8)
         return NULL;
 
     /* Create response */
@@ -254,9 +269,12 @@ static struct message *cmd_sync_handler(
         struct usb_state *state,
         const struct message *request)
 {
-    (void)state;
-    (void)request;
-    return NULL;
+    /* Check message size */
+    if (request->bcnt != 1)
+        return NULL;
+
+    /* Echo the sync */
+    return message_copy(request);
 }
 
 /**
@@ -267,11 +285,9 @@ static struct message *cmd_sync_handler(
 ** \return The response.
 */
 static struct message *cmd_error_handler(
-        struct usb_state *state,
-        const struct message *request)
+        struct usb_state *state __unused,
+        const struct message *request __unused)
 {
-    (void)state;
-    (void)request;
     return NULL;
 }
 
