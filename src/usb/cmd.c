@@ -209,7 +209,7 @@ static struct message *cmd_lock_handler(
 ** \return The response.
 */
 static struct message *cmd_wink_handler(
-        struct usb_state *state,
+        struct usb_state *state __unused,
         const struct message *request)
 {
     /* Check message size */
@@ -266,7 +266,7 @@ static struct message *cmd_init_handler(
 ** \return The response.
 */
 static struct message *cmd_sync_handler(
-        struct usb_state *state,
+        struct usb_state *state __unused,
         const struct message *request)
 {
     /* Check message size */
