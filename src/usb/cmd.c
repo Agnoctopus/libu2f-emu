@@ -129,12 +129,11 @@ struct message *cmd_generate_error(uint32_t cid, uint8_t error)
 ** \return The response.
 */
 static struct message *cmd_ping_handler(
-        struct usb_state *state,
+        struct usb_state *state __attribute__ ((unused)),
         const struct message *request)
 {
-    (void)state;
-    (void)request;
-    return NULL;
+    /* Echo the ping  */
+    return message_copy(request);
 }
 
 /**
