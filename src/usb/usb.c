@@ -125,7 +125,7 @@ void u2f_emu_vdev_usb_process(void *state,
     if (size != PACKET_SIZE)
     {
         usb_state->response =
-                cmd_generate_error(cid, ERROR_INVALID_CMD);
+                cmd_generate_error(cid, ERR_INVALID_CMD);
         return;
     }
 
@@ -149,7 +149,7 @@ void u2f_emu_vdev_usb_process(void *state,
     if (is_init_packet)
     {
         if (usb_state->in_transaction)
-            response = cmd_generate_error(cid, ERROR_CHANNEL_BSY);
+            response = cmd_generate_error(cid, ERR_CHANNEL_BUSY);
         else
             response = packet_init_handle(usb_state, packet);
     }
@@ -159,7 +159,7 @@ void u2f_emu_vdev_usb_process(void *state,
             && usb_state->transaction.request->cid == cid)
                 response = packet_cont_handle(usb_state, packet);
         else
-            response = cmd_generate_error(cid, ERROR_INVALID_CMD);
+            response = cmd_generate_error(cid, ERR_INVALID_CMD);
     }
 
     /* Override current response */

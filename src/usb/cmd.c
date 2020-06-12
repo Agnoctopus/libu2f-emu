@@ -88,24 +88,28 @@ const char *cmd_strerror(int error_nb)
     /* Error switch */
     switch (error_nb)
     {
-        case ERROR_INVALID_CMD:
-            return "Invalid command";
-        case ERROR_INVALID_PAR:
-            return "Invalid parameter";
-        case ERROR_INVALID_LEN:
-            return "Invalid message length";
-        case ERROR_INVALID_SEQ:
-            return "Invalid message sequence";
-        case ERROR_MSG_TIMEOUT:
-            return "Invalid timed out";
-        case ERROR_CHANNEL_BSY:
-            return "Channel busy";
-        case ERROR_CMD_LOCK_RQ:
-            return "Command require channel lock";
-        case ERROR_SYNC_FAILED:
-            return "Command sync failed";
-        default:
-            return "Unknow command";
+    case ERR_NONE:
+        return "No error";
+    case ERR_INVALID_CMD:
+        return "Invalid command";
+    case ERR_INVALID_PAR:
+        return "Invalid parameter";
+    case ERR_INVALID_LEN:
+        return "Invalid message length";
+    case ERR_INVALID_SEQ:
+        return "Invalid message sequencing";
+    case ERR_MSG_TIMEOUT:
+        return "Message has timed out";
+    case ERR_CHANNEL_BUSY:
+        return "Channel is busy";
+    case ERR_LOCK_REQUIRED:
+        return "Command requires channel lock";
+    case ERR_SYNC_FAILED:
+        return "Command sync failed / Message on CID 0";
+    case ERR_OTHER:
+        return "Other unspecified error";
+    default:
+        return "Unknow command";
     }
     /* Should never be executed */
 
@@ -279,8 +283,7 @@ struct message *cmd_process(struct usb_state *state,
 
     /* Check */
     if (handler == NULL)
-        return cmd_generate_error(request->cid,
-                ERROR_INVALID_CMD);
+        return cmd_generate_error(request->cid, ERR_INVALID_CMD);
 
     /* Process it */
     return handler(state, request);

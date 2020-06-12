@@ -23,14 +23,17 @@
 #define CMD_ERROR   BIT(7) | 0x3f
 
 /* Errors bits */
-#define ERROR_INVALID_CMD   1
-#define ERROR_INVALID_PAR   2
-#define ERROR_INVALID_LEN   3
-#define ERROR_INVALID_SEQ   4
-#define ERROR_MSG_TIMEOUT   5
-#define ERROR_CHANNEL_BSY   6
-#define ERROR_CMD_LOCK_RQ   7
-#define ERROR_SYNC_FAILED   8
+#define ERR_NONE            0x00 /**< No error */
+#define ERR_INVALID_CMD     0x01 /**< Invalid command */
+#define ERR_INVALID_PAR     0x02 /**< Invalid parameter */
+#define ERR_INVALID_LEN     0x03 /**< Invalid message length */
+#define ERR_INVALID_SEQ     0x04 /**< Invalide message sequencing */
+#define ERR_MSG_TIMEOUT     0x05 /**< Message has timed out */
+#define ERR_CHANNEL_BUSY    0x06 /**< Channel is busy */
+#define ERR_LOCK_REQUIRED   0x0a /**< Command requires channel lock */
+#define ERR_SYNC_FAILED     0x0b /**< Command sync failed */
+#define ERR_INVALID_CID     0x0b /**< Message on CID 0 */
+#define ERR_OTHER           0x7f /**< Other unspecified error */
 
 /* Init CMD informations */
 #define U2FHID_INIT_BCNT 8
