@@ -159,6 +159,7 @@ void counter_free(struct u2f_emu_vdev_counter *vdev_counter)
     struct counter *counter = (struct counter*)vdev_counter;
 
     /* Release */
-    fclose(counter->fp);
+    if (counter->is_synced)
+        fclose(counter->fp);
     free(counter);
 }
