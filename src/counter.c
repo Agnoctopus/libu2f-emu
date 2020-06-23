@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -20,7 +21,7 @@ struct counter
     uint32_t value; /**< Value of the counter */
 
     /* Synchronisation */
-    int fd; /**< File fd for write back operation */
+    FILE *fp; /**< File fp for write back operation */
     bool is_synced; /**< Is the counter synced with a file */
 };
 
@@ -43,9 +44,9 @@ static void counter_increment(
         return;
 
     /* Write back */
-    if (lseek(counter->fd, 0, SEEK_SET) == -1)
+    if (fseek(counter->fp, 0, SEEK_SET) == -1)
         return;
-    write(counter->fd, &counter->value, sizeof(counter->value));
+    fprintf(counter->fp, "%u\n", counter->value);
 }
 
 /**
@@ -99,12 +100,20 @@ bool counter_new_from_dir(const char *pathname,
         return false;
     }
 
-    /* Read value  */
-    uint32_t value = 0;
-    ssize_t rr = read(fd, &value, sizeof(value));
-    if (rr < 0)
+    /* File handler */
+    FILE *fp = fdopen(fd, "r+");
+    if (fp == NULL)
     {
         close(fd);
+        return false;
+    }
+
+    /* Read value  */
+    uint32_t value = 0;
+    int ret = fscanf(fp, "%u", &value);
+    if (ret == EOF)
+    {
+        fclose(fp);
         return false;
     }
 
@@ -112,7 +121,7 @@ bool counter_new_from_dir(const char *pathname,
     counter->vdev_counter.counter_increment = counter_increment;
     counter->vdev_counter.counter_read = counter_read;
     counter->value = value;
-    counter->fd = fd;
+    counter->fp = fp;
     counter->is_synced = true;
 
     /* Reference */
@@ -150,5 +159,6 @@ void counter_free(struct u2f_emu_vdev_counter *vdev_counter)
     struct counter *counter = (struct counter*)vdev_counter;
 
     /* Release */
+    fclose(counter->fp);
     free(counter);
 }
