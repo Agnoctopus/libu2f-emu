@@ -15,21 +15,29 @@
 */
 int main(int argc, char *argv[])
 {
-    /* Setup dir */
+    /* vdev */
+    u2f_emu_vdev *vdev = NULL;
+
+    /* Ephemeral */
     if (argc <= 1)
     {
-        fprintf(stderr, "Usage: %s <setup_dir>\n", argv[0]);
-        return 1;
+        if (u2f_emu_vdev_new_ephemeral(&vdev) != U2F_EMU_OK)
+        {
+            warnx("Failed to create a new ephemeral U2F virtual "
+                    "emulated device.");
+            return 1;
+        }
     }
-    const char *setup_dir = argv[1];
-
-    /* New U2F virtual emulatted device */
-    u2f_emu_vdev *vdev = NULL;
-    if (u2f_emu_vdev_new_from_dir(&vdev, setup_dir) != U2F_EMU_OK)
+    else
     {
-        /* Log */
-        warnx("Failed to create a new U2F virtual emulated device.");
-        return 1;
+        /* New U2F virtual emulated device */
+        if (u2f_emu_vdev_new_from_dir(&vdev, argv[1]) != U2F_EMU_OK)
+        {
+            /* Log */
+            warnx("Failed to create a new U2F virtual emulated device "
+                    "from %s", argv[1]);
+            return 1;
+        }
     }
 
     /* New USB U2F device */
