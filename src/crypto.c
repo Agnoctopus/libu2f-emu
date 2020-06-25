@@ -9,6 +9,8 @@
 #include <openssl/bio.h>
 #include <openssl/pem.h>
 #include <openssl/rand.h>
+#include <openssl/x509.h>
+#include <openssl/x509v3.h>
 
 #include "crypto.h"
 
@@ -299,13 +301,56 @@ int crypto_x509_get_bytes(struct crypto_core *crypto_core,
     return i2d_X509(crypto_core->cert, buffer);
 }
 
+/**
+** \brief Add an extension to a x509 certificate.
+**
+** \param cert The cert to add the extension.
+** \param nid The nid of the extenstion.
+** \param value The value of the extension.
+** \param critical The extension critism.
+** \return Success: true.
+**         Failure: false.
+*/
+static bool crypto_x509_add_ext(X509 *cert, int nid, const char *value,
+        bool critical)
+{
+    X509_EXTENSION *ex = NULL;
+    X509V3_CTX ctx;
+
+    /* Context */
+    X509V3_set_ctx_nodb(&ctx);
+    X509V3_set_ctx(&ctx, cert, cert, NULL, NULL, 0);
+
+    /* Extension config */
+    ex = X509V3_EXT_conf_nid(NULL, &ctx, nid, value);
+    if (!ex) {
+        return false;
+    }
+    if (critical)
+        X509_EXTENSION_set_critical(ex, 1);
+
+    /* Add extension */
+    int result = X509_add_ext(cert, ex, -1);
+
+    /* Release */
+    X509_EXTENSION_free(ex);
+
+    return result == 0;
+}
+
+/**
+** \brief Generate a new x509 certificate from an ec key.
+**
+** \param key The ec key.
+** \return The new x509 certificate.
+*/
 static X509 *crypto_x509_generate(EC_KEY *key)
 {
-    /* x509 verision 2 */
+    /* x509 version */
     X509 *cert = X509_new();
     X509_set_version(cert, 0x2);
 
-    /* Serial */
+    /* Serial number */
     uint64_t serial = 0;
     if (RAND_priv_bytes((uint8_t *)&serial, sizeof(serial)) != 1)
         return NULL;
@@ -320,21 +365,23 @@ static X509 *crypto_x509_generate(EC_KEY *key)
     EVP_PKEY_assign_EC_KEY(pkey, key);
     X509_set_pubkey(cert, pkey);
 
-    /* Subject at name and issuer */
-    X509_NAME * name;
+    /* Subject name and issuer */
+    X509_NAME *name;
     name = X509_get_subject_name(cert);
-
     X509_NAME_add_entry_by_txt(name, "CN",  MBSTRING_ASC,
             (unsigned char *)"U2F emulated", -1, -1, 0);
-
     X509_set_issuer_name(cert, name);
 
-    /* Sign */
+    /* Extensions */
+    crypto_x509_add_ext(cert, NID_subject_key_identifier, "hash", false);
+    crypto_x509_add_ext(cert, NID_authority_key_identifier, "keyid:always", false);
+    crypto_x509_add_ext(cert, NID_basic_constraints, "CA:TRUE", true);
+
+    /* Signature */
     X509_sign(cert, pkey, EVP_sha256());
+
     return cert;
 }
-
-
 
 EC_KEY *crypto_ec_generate_key(void)
 {
