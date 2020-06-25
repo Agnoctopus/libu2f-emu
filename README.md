@@ -12,7 +12,7 @@ Four transports are available:
 - USB
 - NFC
 - BLUETOOTH
-- AGNOSTIC
+- APDU
 
 Once create, it is possible to interact with the devices by sending
 and receiving transport specific data through the API.
