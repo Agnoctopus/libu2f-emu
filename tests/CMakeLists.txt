@@ -33,7 +33,7 @@ if(GTest_FOUND)
 
     add_custom_command(OUTPUT SETUP_DIR
         COMMAND rm -rf .u2f.tmp
-        COMMAND ${CMAKE_SOURCE_DIR}/setup.sh .u2f.tmp)
+        COMMAND ${CMAKE_SOURCE_DIR}/scripts/setup.sh .u2f.tmp)
     add_custom_target(setup_dir DEPENDS SETUP_DIR)
 
     add_dependencies(check setup_dir sanity-check basic payload)

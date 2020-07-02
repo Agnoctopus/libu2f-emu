@@ -20,7 +20,7 @@ clean-local:
 
 pre-check:
 	make post-check
-	${top_srcdir}/setup.sh ${top_srcdir}/tests/.u2f.tmp
+	${top_srcdir}/scripts/setup.sh ${top_srcdir}/tests/.u2f.tmp
 
 post-check:
 	rm -rf ${top_srcdir}/tests/.u2f.tmp
