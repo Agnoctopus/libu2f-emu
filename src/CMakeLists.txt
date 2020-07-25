@@ -13,6 +13,7 @@ set (SRC
     error.c
     payload.c
     transport.c
+    utils.c
     u2f-emu.c
     usb/cmd.c
     usb/message.c

@@ -106,6 +106,11 @@ AM_COND_IF([HAVE_DOT],
         AC_SUBST([HAVE_DOT], [NO]))
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([Doxyfile])])
 
+case $host in
+*-mingw*)
+        LDFLAGS="${LDFLAGS} -no-undefined"
+esac
+
 # Configs
 AC_CONFIG_FILES([
         Makefile

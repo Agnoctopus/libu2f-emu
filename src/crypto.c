@@ -13,6 +13,7 @@
 #include <openssl/x509v3.h>
 
 #include "crypto.h"
+#include "utils.h"
 
 
 /**
@@ -401,43 +402,18 @@ EC_KEY *crypto_ec_generate_key(void)
 }
 
 /**
-** \brief Open a file.
-**
-** \param dirfd The dirfd to get pathname file.
-** \param pathname The pathname of the file.
-** \return Success: The File handler.
-**         Failure: NULL.
-*/
-static FILE *crypto_open(int dirfd, const char *pathname)
-{
-    /* Open */
-    int fd = openat(dirfd, pathname, O_RDONLY | O_CLOEXEC);
-    if (fd < 0)
-        return NULL;
-
-    /* Fdopen */
-    FILE * fp = fdopen(fd, "rb");
-    if (fp == NULL)
-    {
-        close(fd);
-        return NULL;
-    }
-    return fp;
-}
-
-/**
 ** \brief Get the x509 from file.
 **
-** \param dirfd The dirfd to get pathname file.
-** \param pathname The pathname of the x509 key.
+** \param dirpath The path of the directory.
+** \param filename The filename.
 ** \return Success: The x509.
 **         Failure: NULL.
 */
-static X509 *crypto_x509_from_file(int dirfd,
-        const char *pathname)
+static X509 *crypto_x509_from_file(const char *dirpath,
+        const char *filename)
 {
     /* Open */
-    FILE *fp = crypto_open(dirfd, pathname);
+    FILE *fp = open_file_from_dir(dirpath, filename, "rbe");
     if (fp == NULL)
         return NULL;
 
@@ -484,16 +460,16 @@ static X509 *crypto_x509_from_pem(const char *x509_pem)
 /**
 ** \brief Get the ec private key from file
 **
-** \param dirfd The dirfd to get pathname file.
-** \param pathname The pathname of the ec private key.
+** \param dirpath The path of the directory.
+** \param filename The filename.
 ** \return Success: The private key.
 **         Failure: NULL.
 */
-static EC_KEY *crypto_ec_privkey_from_file(int dirfd,
-        const char *pathname)
+static EC_KEY *crypto_ec_privkey_from_file(const char *dirpath,
+        const char *filename)
 {
     /* Open */
-    FILE *fp = crypto_open(dirfd, pathname);
+    FILE *fp = open_file_from_dir(dirpath, filename, "rbe");
     if (fp == NULL)
         return NULL;
 
@@ -541,18 +517,17 @@ static EC_KEY *crypto_ec_privkey_from_pem(
 /**
 ** \brief Get the entropy from file.
 **
-** \param dirfd The dirfd to get pathname file.
-** \param pathname The pathname of the entropy bits.
+** \param dirpath The path of the directory.
+** \param filename The filename.
 ** \param entropy The entropy to setu.
 */
-static bool crypto_entropy_from_file(int dirfd, const char *pathname,
+static bool crypto_entropy_from_file(const char *dirpath, const char *filename,
         uint8_t entropy[48])
 {
     /* Open */
-    FILE *fp = crypto_open(dirfd, pathname);
+    FILE *fp = open_file_from_dir(dirpath, filename, "rbe");
     if (fp == NULL)
-        return false;
-
+        return NULL;
     /* Read entropy */
     bool ok = fread(entropy, 48, 1, fp) == 1;
 
@@ -660,36 +635,23 @@ bool crypto_new_ephemeral(struct crypto_core **core_ref)
     return true;
 }
 
-bool crypto_new_from_dir(const char *pathname,
+bool crypto_new_from_dir(const char *dirpath,
         struct crypto_core **core_ref)
 {
-    /* Open dir */
-    int dirfd = openat(AT_FDCWD, pathname,
-            O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-    if (dirfd < 0)
-        return false;
-
     /* Entropy */
     uint8_t entropy[48];
-    if (!crypto_entropy_from_file(dirfd, CRYPTO_ENTROPY_FILENAME,
+    if (!crypto_entropy_from_file(dirpath, CRYPTO_ENTROPY_FILENAME,
             entropy))
-    {
-        close(dirfd);
         return false;
-    }
 
     /* Certificate */
-    X509 *cert = crypto_x509_from_file(dirfd, CRYPTO_CERT_FILENAME);
+    X509 *cert = crypto_x509_from_file(dirpath, CRYPTO_CERT_FILENAME);
     if (cert == NULL)
-    {
-        close(dirfd);
         return false;
-    }
 
     /* Private key */
-    EC_KEY *privkey = crypto_ec_privkey_from_file(dirfd,
+    EC_KEY *privkey = crypto_ec_privkey_from_file(dirpath,
             CRYPTO_PRIVKEY_FILENAME);
-    close(dirfd);
     if (privkey == NULL)
         return false;
 

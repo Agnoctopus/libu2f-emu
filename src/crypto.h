@@ -147,12 +147,12 @@ EC_KEY *crypto_ec_generate_key(void);
 /**
 ** \brief Setup a crypto core from a dir.
 **
-** \param pathname The pathname of the setup directory.
+** \param dirpath The path of the setup directory.
 ** \param core_ref The crypto core to setup.
 ** \return Sucess: true.
 **         Failure: false.
 */
-bool crypto_new_from_dir(const char *pathname,
+bool crypto_new_from_dir(const char *dirpath,
         struct crypto_core **core_ref);
 
 /**

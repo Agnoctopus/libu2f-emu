@@ -64,7 +64,11 @@ static struct message *packet_init_handle(struct usb_state *state,
 
     /* Generate a new cid */
     if (request->cid == BROADCAST_CID)
-        request->cid = rand_r(&state->cid_seed);
+    {
+        srand(state->cid_seed);
+        request->cid = rand();
+        state->cid_seed = request->cid;
+    }
 
     /* Transaction */
     transaction_start(&state->transaction, request);

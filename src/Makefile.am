@@ -15,7 +15,7 @@ libu2f_emu_la_SOURCES += counter.c counter.h
 libu2f_emu_la_SOURCES += crypto.c crypto.h
 libu2f_emu_la_SOURCES += transport.c transport.h
 libu2f_emu_la_SOURCES += payload.c payload.h
-libu2f_emu_la_SOURCES += error.c
+libu2f_emu_la_SOURCES += error.c utils.c
 # USB
 libu2f_emu_la_SOURCES += usb/usb.c usb/usb.h
 libu2f_emu_la_SOURCES += usb/transaction.c usb/transaction.h

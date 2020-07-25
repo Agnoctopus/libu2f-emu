@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "counter.h"
+#include "utils.h"
 
 
 /**
@@ -63,27 +64,6 @@ static uint32_t counter_read(
     return counter->value;
 }
 
-/**
-** \brief Open the counter file from the setup dir.
-**
-** \param pathname The pathname of the setup dir.
-** \return Success: The fd.
-**         Failure: -1.
-*/
-static int counter_open_file(const char *pathname)
-{
-    /* Open dir */
-    int dirfd = openat(AT_FDCWD, pathname,
-            O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-    if (dirfd < 0)
-        return dirfd;
-
-    /* Open file */
-    int fd = openat(dirfd, COUNTER_FILENAME, O_RDWR | O_CLOEXEC);
-    close(dirfd);
-    return fd;
-}
-
 bool counter_new_from_dir(const char *pathname,
         struct u2f_emu_vdev_counter **vdev_counter_ref)
 {
@@ -93,20 +73,9 @@ bool counter_new_from_dir(const char *pathname,
         return false;
 
     /* Retrieve value */
-    int fd = counter_open_file(pathname);
-    if (fd < 0)
-    {
-        free(counter);
-        return false;
-    }
-
-    /* File handler */
-    FILE *fp = fdopen(fd, "r+");
+    FILE *fp = open_file_from_dir(pathname, COUNTER_FILENAME, "re+");
     if (fp == NULL)
-    {
-        close(fd);
         return false;
-    }
 
     /* Read value  */
     uint32_t value = 0;
