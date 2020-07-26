@@ -59,6 +59,20 @@ static raw_cmd_handler_t raw_cmd_get_handler(uint8_t cmd)
     return NULL;
 }
 
+struct payload *u2f_emu_vdev_raw_generate_error(uint16_t error)
+{
+    /* Status buffer */
+    uint8_t status_buffer[2];
+    uint8_t status_h = error >> 8;
+    uint8_t status_l = error & 0xFF;
+    status_buffer[0] = status_h;
+    status_buffer[1] = status_l;
+
+    /* Payload */
+    return  payload_new_from_data(status_buffer,
+            sizeof(status_buffer));;
+}
+
 /**
 ** \brief The Handler for U2F_VERSION raw cmd.
 **

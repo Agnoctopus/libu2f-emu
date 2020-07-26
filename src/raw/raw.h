@@ -44,6 +44,15 @@ struct frame_header
 /* U2F version */
 #define VERSION_STR "U2F_V2"
 
+
+/**
+** \brief Generate an error raw payload response.
+**
+** \param error The error.
+** \return The respective error raw payload reponse generated
+*/
+struct payload *u2f_emu_vdev_raw_generate_error(uint16_t error);
+
 /**
 ** \brief Process incoming data from a RAW APDU.
 **
@@ -52,7 +61,7 @@ struct frame_header
 ** \param size The size of the RAW APDU packet.
 ** \return The response payload.
 */
-struct payload * u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
+struct payload *u2f_emu_vdev_raw_process(u2f_emu_vdev *vdev,
         const void *apdu, size_t size);
 
 /**

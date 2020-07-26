@@ -94,6 +94,7 @@ size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
         /* Free */
         EVP_CIPHER_CTX_free(ctx);
         free(*buffer);
+        *buffer = NULL;
 
         return 0;
     }
@@ -104,6 +105,7 @@ size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
         /* Free */
         EVP_CIPHER_CTX_free(ctx);
         free(*buffer);
+        *buffer = NULL;
 
         return 0;
     }

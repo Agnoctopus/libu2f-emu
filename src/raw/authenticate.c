@@ -323,6 +323,8 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
         params.key_handle_size,
         &key_handle_size
     );
+    if (key_handle == NULL)
+        return u2f_emu_vdev_raw_generate_error(SW_WRONG_DATA);
 
     /* Privkey */
     EC_KEY *key  = authenticate_get_pubkey_from_key_handle(
