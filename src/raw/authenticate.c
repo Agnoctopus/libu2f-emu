@@ -252,9 +252,6 @@ static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
     struct authentification_params params;
     memcpy(&params, apdu + 7, sizeof(params));
 
-    /* Start Response payload */
-    struct payload *payload = payload_new();
-
     /* Key handle ciphered */
     uint8_t key_handle_cipher_size = 0;
     uint8_t *key_handle_cipher =
@@ -269,11 +266,14 @@ static struct payload *raw_authenticate_check(u2f_emu_vdev *vdev,
         key_handle_cipher_size,
         &key_handle_size
     );
-    if (key_handle_size == 0)
+    if (key_handle == NULL)
     {
         free(key_handle_cipher);
-        return NULL;
+        return u2f_emu_vdev_raw_generate_error(SW_WRONG_DATA);
     }
+
+    /* Start Response payload */
+    struct payload *payload = payload_new();
 
     /* Privkey */
     size_t privkey_size = key_handle_size - U2F_APP_PARAM_SIZE;
@@ -306,9 +306,6 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
     struct authentification_params params;
     memcpy(&params, apdu + 7, sizeof(params));
 
-    /* Start Response payload */
-    struct payload *payload = payload_new();
-
     /* Key handle ciphered */
     uint8_t key_handle_cipher_size = 0;
     uint8_t *key_handle_cipher =
@@ -324,11 +321,17 @@ static struct payload *raw_authenticate_enforce(u2f_emu_vdev *vdev,
         &key_handle_size
     );
     if (key_handle == NULL)
+    {
+        free(key_handle_cipher);
         return u2f_emu_vdev_raw_generate_error(SW_WRONG_DATA);
+    }
 
     /* Privkey */
     EC_KEY *key  = authenticate_get_pubkey_from_key_handle(
         key_handle, key_handle_size);
+
+    /* Start Response payload */
+    struct payload *payload = payload_new();
 
     /* User precense */
     authenticate_response_user_pre(payload, true);
