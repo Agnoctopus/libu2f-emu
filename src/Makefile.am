@@ -29,13 +29,14 @@ libu2f_emu_la_SOURCES += raw/register.c
 # APDU
 libu2f_emu_la_SOURCES += apdu/apdu.c apdu/apdu.h
 # MISC
-libu2f_emu_la_SOURCES += u2f-emu.pc.in
+libu2f_emu_la_SOURCES += u2f-emu.pc.in u2f-emu.map
 
 # Libs
 libu2f_emu_la_LIBADD = $(OPENSSL_LIBS)
 
 # Lib info
 libu2f_emu_la_LDFLAGS = -version-info $(SO_VERSION)
+libu2f_emu_la_LDFLAGS += -Wl,--version-script=$(srcdir)/u2f-emu.map
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = u2f-emu.pc

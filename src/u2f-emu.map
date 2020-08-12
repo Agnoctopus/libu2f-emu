@@ -1,0 +1,17 @@
+U2F_EMU_0.0
+{
+    global:
+        u2f_emu_strerror;
+        u2f_emu_vdev_new_from_dir;
+        u2f_emu_vdev_new_ephemeral;
+        u2f_emu_vdev_new;
+        u2f_emu_vdev_set_apdu;
+        u2f_emu_vdev_free;
+        u2f_emu_vdev_send;
+        u2f_emu_vdev_has_response;
+        u2f_emu_vdev_get_response;
+        u2f_emu_vdev_free_response;
+
+    local:
+        *;
+};
