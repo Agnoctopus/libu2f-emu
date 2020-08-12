@@ -38,6 +38,8 @@ target_include_directories(u2f-emu PRIVATE .)
 set_target_properties(u2f-emu PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(u2f-emu PROPERTIES SOVERSION ${SO_VERSION})
 set_target_properties(u2f-emu PROPERTIES PUBLIC_HEADER "${HEADERS}")
+set_property(TARGET u2f-emu APPEND_STRING PROPERTY
+    LINK_FLAGS " -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/u2f-emu.map")
 target_compile_options(u2f-emu PRIVATE -Wall -Wextra -Werror -pedantic -std=c99 ${EXTRA_FLAGS})
 target_compile_options(u2f-emu PRIVATE -D_GNU_SOURCE)
 target_link_libraries(u2f-emu OpenSSL::SSL gcov)
