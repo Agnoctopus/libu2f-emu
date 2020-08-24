@@ -26,6 +26,7 @@ aclocal.m4
 libtool
 stamp-h1
 libu2f-emu.la
+libu2f-emu-testing.la
 autoscan.log
 configure.scan
 .dirstamp

@@ -31,7 +31,7 @@ set (HEADERS
     u2f-emu.h
     u2f-emu-types.h)
 
-# Library U2F-Emu
+# Library U2F-emu
 add_library(u2f-emu SHARED)
 target_sources(u2f-emu PRIVATE ${SRC})
 target_include_directories(u2f-emu PRIVATE .)
@@ -45,6 +45,17 @@ target_compile_options(u2f-emu PRIVATE -D_GNU_SOURCE)
 target_link_libraries(u2f-emu OpenSSL::SSL gcov)
 install(TARGETS u2f-emu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/u2f-emu)
+
+# Library U2F-emu-testing with visibility
+add_library(u2f-emu-testing SHARED EXCLUDE_FROM_ALL)
+target_sources(u2f-emu-testing PRIVATE ${SRC})
+target_include_directories(u2f-emu-testing PRIVATE .)
+set_target_properties(u2f-emu-testing PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(u2f-emu-testing PROPERTIES SOVERSION ${SO_VERSION})
+set_target_properties(u2f-emu-testing PROPERTIES PUBLIC_HEADER "${HEADERS}")
+target_compile_options(u2f-emu-testing PRIVATE -Wall -Wextra -Werror -pedantic -std=c99 ${EXTRA_FLAGS})
+target_compile_options(u2f-emu-testing PRIVATE -D_GNU_SOURCE)
+target_link_libraries(u2f-emu-testing OpenSSL::SSL gcov)
 
 # Pkgconfig
 set (version ${SO_VERSION})

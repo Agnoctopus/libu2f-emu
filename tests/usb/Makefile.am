@@ -14,10 +14,10 @@ TESTS = usb message packet
 check_PROGRAMS = $(TESTS)
 
 usb_SOURCES = usb.cc
-usb_LDADD = $(top_srcdir)/src/libu2f-emu.la
+usb_LDADD = $(top_srcdir)/src/libu2f-emu-testing.la
 
 message_SOURCES = message.cc
-message_LDADD = $(top_srcdir)/src/libu2f-emu.la
+message_LDADD = $(top_srcdir)/src/libu2f-emu-testing.la
 
 packet_SOURCES = packet.cc
-packet_LDADD = $(top_srcdir)/src/libu2f-emu.la
+packet_LDADD = $(top_srcdir)/src/libu2f-emu-testing.la

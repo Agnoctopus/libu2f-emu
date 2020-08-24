@@ -5,7 +5,7 @@ AM_CPPFLAGS = -D_GNU_SOURCE
 AM_LDFLAGS = $(OPENSSL_LIBS)
 
 lib_LTLIBRARIES = libu2f-emu.la
-u2f_emu_includedir=$(includedir)/u2f-emu
+u2f_emu_includedir = $(includedir)/u2f-emu
 u2f_emu_include_HEADERS = u2f-emu.h u2f-emu-types.h
 
 # General
@@ -37,6 +37,11 @@ libu2f_emu_la_LIBADD = $(OPENSSL_LIBS)
 # Lib info
 libu2f_emu_la_LDFLAGS = -version-info $(SO_VERSION)
 libu2f_emu_la_LDFLAGS += -Wl,--version-script=$(srcdir)/u2f-emu.map
+
+# Same lib with symbol visibility set for testing
+lib_LTLIBRARIES += libu2f-emu-testing.la
+libu2f_emu_testing_la_SOURCES = $(libu2f_emu_la_SOURCES)
+libu2f_emu_testing_la_LIBADD = $(libu2f_emu_la_LIBADD)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = u2f-emu.pc
