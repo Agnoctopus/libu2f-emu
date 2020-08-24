@@ -85,6 +85,11 @@ size_t crypto_aes_decrypt(struct crypto_core* crypto_core,
 
     /* Allocate */
     *buffer = malloc(size + 32);
+    if (*buffer == NULL)
+    {
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
     int len = 0;
     size_t result_len = 0;
 
@@ -146,6 +151,11 @@ size_t crypto_aes_encrypt(struct crypto_core* crypto_core,
 
     /* Allocate */
     *buffer = malloc(data_len + 32);
+    if (*buffer == NULL)
+    {
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
     int len = 0;
 
     /* Encrypt */
@@ -257,6 +267,8 @@ size_t crypto_hash(const void *data, size_t data_len,
 
     /* Allocate hash buffer */
     *hash = malloc(SHA256_DIGEST_LENGTH);
+    if (*hash == NULL)
+        return 0;
 
     /* Update */
     if (SHA256_Update(&sha256, data, data_len) != 1)
