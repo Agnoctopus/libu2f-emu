@@ -16,6 +16,25 @@ gtest = dependency('gtest',  version: '>= 1.10.0', required: false, main: true)
 
 inc = include_directories('src')
 
+if get_option('coverage')
+  add_global_arguments('-g3', '--coverage', '-fno-inline',
+    '-fno-inline-small-functions', '-fno-default-inline',
+    '-fprofile-arcs', '-ftest-coverage', '-fkeep-inline-functions', '-fPIC',
+    '-fkeep-static-functions', language: 'c')
+  add_global_arguments('-g3', '--coverage', '-fno-inline',
+    '-fno-inline-small-functions', '-fno-default-inline',
+    '-fprofile-arcs', '-ftest-coverage', '-fkeep-inline-functions', '-fPIC',
+    '-fkeep-static-functions', '-fno-elide-constructors', language: 'cpp')
+  add_global_link_arguments('-lgcov', language: 'c')
+  add_global_link_arguments('-lgcov', language: 'cpp')
+
+  custom_target('cov', output: 'coverage',
+    command: ['mkdir', '-p', '@OUTPUT@', '&&', 'cd', '@0@'.format(meson.source_root()), '&&',
+      'gcovr', '-r', 'src/', '--html', '--html-details', '--html-title', 'Libu2f-emu coverage',
+      '--object-directory', '@0@'.format(meson.build_root()),
+      '-o', '@0@/coverage/index.html'.format(meson.build_root()), '-j2'])
+endif
+
 subdir('src')
 
 if not gtest.found()
@@ -45,7 +64,7 @@ else
     error('Skip dot in doc: dot not found.')
   endif
 
-  doc_config.set('TOP_SRCDIR', meson.source_root())
+  doc_config.set('top_srcdir', meson.source_root())
   doc_config.set('TOP_BUILDDIR', meson.build_root())
 
   doxyfile = configure_file(input: 'Doxyfile.in',

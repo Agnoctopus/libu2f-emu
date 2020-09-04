@@ -45,8 +45,8 @@ fi
 # Coverage
 AC_ARG_ENABLE([coverage],
         [AS_HELP_STRING([--enable-coverage], [Enable coverage])], [
-                CFLAGS="$CFLAGS -g3 -O0 --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -ftest-coverage -fkeep-inline-functions -fkeep-static-functions"
-                CXXFLAGS="$CXXFLAGS -g3 -O0 --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -ftest-coverage -fkeep-inline-functions -fkeep-static-functions -fno-elide-constructors"
+                CFLAGS="$CFLAGS -g3  --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -ftest-coverage -fkeep-inline-functions -fkeep-static-functions"
+                CXXFLAGS="$CXXFLAGS -g3 --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -ftest-coverage -fkeep-inline-functions -fkeep-static-functions -fno-elide-constructors"
                 LDFLAGS="$LDFLAGS -lgcov"])
 
 # Compiler flags
