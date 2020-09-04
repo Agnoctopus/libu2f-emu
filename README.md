@@ -52,6 +52,7 @@ $ ./examples/usb/u2f-emu-usb <setup_dir>
 The project support two build systems:
 - Autotools
 - CMake
+- Meson
 
 Setup the build system:
 ```shell
@@ -62,6 +63,9 @@ $ ./configure
 # CMake
 $ mkdir build && cd build
 $ cmake ..
+
+# Meson
+$ meson build && cd build
 ```
 
 Build and install the library:
@@ -96,6 +100,10 @@ $ make coverage
 # CMake
 $ cmake -DCMAKE_BUILD_TYPE=Coverage ..
 $ make coverage
+
+# Meson
+$ meson -Dcoverage=true build && cd build
+$ make test && make coverage
 ```
 The coverage html report can be accessed here: `coverage/index.html`.
 
