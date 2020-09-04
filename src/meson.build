@@ -51,6 +51,17 @@ u2f_emu = shared_library('u2f-emu',
   dependencies: openssl,
   install: true)
 
+u2f_emu_testing = shared_library('u2f-emu-testing',
+  sources: [
+    u2f_emu_sources,
+    u2f_emu_headers,
+    u2f_emu_private_headers
+  ],
+  version: '0.0.0',
+  soversion: 0,
+  dependencies: openssl,
+  build_by_default: false)
+
 pkg = import('pkgconfig')
 pkg.generate(u2f_emu,
   name : 'Libu2f-emu',
