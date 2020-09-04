@@ -1,4 +1,4 @@
-project('u2f-emulated', ['c', 'cpp'], meson_version: '>= 0.50.0',
+project('u2f-emulated', ['c', 'cpp'], meson_version: '>= 0.52.0',
         version: '0.0.0',
         license: 'GPL2',
         default_options:
@@ -26,3 +26,5 @@ else
     command: ['@0@/scripts/setup.sh'.format(meson.source_root()), '@OUTPUT@'])
   subdir('tests')
 endif
+
+subdir('examples')

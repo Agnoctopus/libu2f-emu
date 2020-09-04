@@ -1,4 +1,3 @@
-
 sanity_check_sources = 'sanity.cc'
 sanity_check = executable('sanity-check', sanity_check_sources,
   dependencies: gtest)
