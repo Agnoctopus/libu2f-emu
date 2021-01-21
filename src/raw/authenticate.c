@@ -54,10 +54,10 @@ static void authenticate_response_counter(struct payload *payload,
     uint8_t counter_buffer[sizeof(uint32_t)];
 
     /* Fill it */
-    counter_buffer[0] = counter & 0xFF;
-    counter_buffer[1] = (counter >> 8) & 0xFF;
-    counter_buffer[2] = (counter >> 16) & 0xFF;
-    counter_buffer[3] = (counter >> 24) & 0xFF;
+    counter_buffer[0] = (counter >> 24) & 0xFF;
+    counter_buffer[1] = (counter >> 16) & 0xFF;
+    counter_buffer[2] = (counter >> 8) & 0xFF;
+    counter_buffer[3] = counter & 0xFF;
 
     /* Add to response */
     payload_add_data(payload, counter_buffer, sizeof(uint32_t));
@@ -104,10 +104,10 @@ static void authenticate_response_signature(struct payload *payload,
     /* Counter */
     uint8_t counter_buffer[sizeof(uint32_t)];
     /* Fill it */
-    counter_buffer[0] = counter & 0xFF;
-    counter_buffer[1] = (counter >> 8) & 0xFF;
-    counter_buffer[2] = (counter >> 16) & 0xFF;
-    counter_buffer[3] = (counter >> 24) & 0xFF;
+    counter_buffer[0] = (counter >> 24) & 0xFF;
+    counter_buffer[1] = (counter >> 16) & 0xFF;
+    counter_buffer[2] = (counter >> 8) & 0xFF;
+    counter_buffer[3] = counter & 0xFF;
     /* Add it */
     memcpy(buffer_to_sign + index,
         counter_buffer,
