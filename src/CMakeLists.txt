@@ -60,9 +60,9 @@ target_link_libraries(u2f-emu-testing OpenSSL::SSL gcov)
 # Pkgconfig
 set (version ${SO_VERSION})
 set (prefix ${CMAKE_INSTALL_PREFIX})
-set (exec_prefix \${prefix})
-set (libdir \${exec_prefix}/lib)
-set (includedir \${prefix}/include)
+set (exec_prefix ${CMAKE_INSTALL_PREFIX})
+set (libdir ${CMAKE_INSTALL_FULL_LIBDIR})
+set (includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 configure_file(u2f-emu.pc.in u2f-emu.pc @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/src/u2f-emu.pc
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
