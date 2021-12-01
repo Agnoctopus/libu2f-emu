@@ -37,7 +37,7 @@ u2f_emu_private_headers = [
   'apdu/apdu.h'
 ]
 
-install_headers(u2f_emu_headers)
+install_headers(u2f_emu_headers, subdir : 'u2f-emu')
 
 u2f_emu = shared_library('u2f-emu',
   sources: [

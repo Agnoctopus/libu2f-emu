@@ -9,4 +9,4 @@ Version: @version@
 
 Requires:
 Libs: -L${libdir} -lu2f-emu
-Cflags: -I${includedir}/u2f-emu
+Cflags: -I${includedir}
